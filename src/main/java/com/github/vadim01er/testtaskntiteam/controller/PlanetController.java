@@ -1,9 +1,8 @@
 package com.github.vadim01er.testtaskntiteam.controller;
 
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDTO;
+import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
-import com.github.vadim01er.testtaskntiteam.exception.PlanetIsExistsException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.service.PlanetServiceImpl;
 import org.springframework.http.MediaType;
@@ -33,51 +32,101 @@ public class PlanetController {
 
     private final PlanetServiceImpl planetServiceImpl;
 
+    /**
+     * Instantiates a new Planet controller.
+     *
+     * @param planetServiceImpl the planet service
+     */
     public PlanetController(PlanetServiceImpl planetServiceImpl) {
         this.planetServiceImpl = planetServiceImpl;
     }
 
+    /**
+     * Gets all.
+     *
+     * @return the all
+     */
     @GetMapping()
     public ResponseEntity<Object> getAll() {
         List<Planet> planets = planetServiceImpl.getAll();
         return ResponseEntity.ok(planets);
     }
 
+    /**
+     * Gets by id.
+     *
+     * @param id the id
+     * @return the by id
+     * @throws PlanetNotFoundException the planet not found exception
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@Min(0) @PathVariable Long id)
-            throws PlanetNotFoundException {
+    public ResponseEntity<Object> getById(
+            @Min(0) @PathVariable Long id
+    ) throws PlanetNotFoundException {
         Planet planet = planetServiceImpl.getById(id);
         return ResponseEntity.ok(planet);
     }
 
+    /**
+     * Create new {@link Planet}.
+     *
+     * @param planetDto the planet dto
+     * @return the response entity
+     */
     @PostMapping()
-    public ResponseEntity<Object> add(@Valid @RequestBody PlanetDTO planetDTO)
-            throws PlanetIsExistsException {
-        Planet add = planetServiceImpl.add(planetDTO);
+    public ResponseEntity<Object> add(
+            @Valid @RequestBody PlanetDto planetDto
+    ) {
+        Planet add = planetServiceImpl.add(planetDto);
         return ResponseEntity.ok(add);
     }
 
+    /**
+     * Set Lord to the {@link Planet}.
+     *
+     * @param planetId the planet id
+     * @param lordId   the lord id
+     * @return the response entity
+     * @throws LordNotFoundException   the lord not found exception
+     * @throws PlanetNotFoundException the planet not found exception
+     */
     @PutMapping("/{id}/update_lord")
     public ResponseEntity<Object> updateLord(
-            @PathVariable("id") Long planetId,
-            @RequestParam("lord_id") Long lordId
+            @Min(0) @PathVariable("id") Long planetId,
+            @Min(0) @RequestParam("lord_id") Long lordId
     ) throws LordNotFoundException, PlanetNotFoundException {
         Planet update = planetServiceImpl.setLord(planetId, lordId);
         return ResponseEntity.ok(update);
     }
 
+    /**
+     * Update.
+     *
+     * @param planetId  the planet id
+     * @param planetDto the planet dto
+     * @return the response entity
+     * @throws PlanetNotFoundException the planet not found exception
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(
-            @PathVariable("id") Long planetId,
-            @RequestBody PlanetDTO planetDTO
+            @Min(0) @PathVariable("id") Long planetId,
+            @Valid @RequestBody PlanetDto planetDto
     ) throws PlanetNotFoundException {
-        Planet update = planetServiceImpl.update(planetId, planetDTO);
+        Planet update = planetServiceImpl.update(planetId, planetDto);
         return ResponseEntity.ok(update);
     }
 
+    /**
+     * Delete by id response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     * @throws PlanetNotFoundException the planet not found exception
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteById(@PathVariable Long id)
-            throws PlanetNotFoundException {
+    public ResponseEntity<Object> deleteById(
+            @Min(0) @PathVariable Long id
+    ) throws PlanetNotFoundException {
         planetServiceImpl.deleteById(id);
         return ResponseEntity.ok("ok");
     }

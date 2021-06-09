@@ -17,9 +17,8 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * Entity class Lord.
+ * The type {@link Lord}.
  */
 @Getter
 @Setter
@@ -32,16 +31,33 @@ public class Lord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private Integer age;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "lord")
-    @JsonIgnoreProperties("lord")
+    @JsonIgnoreProperties({"lord"})
     private List<Planet> planets = new ArrayList<>();
 
-    public Lord(String name, Integer age) {
-        this.name = name;
-        this.age = age;
+    /**
+     * Instantiates a new Lord.
+     *
+     * @param lordDto the {@link LordDto}
+     */
+    public Lord(LordDto lordDto) {
+        this.name = lordDto.getName();
+        this.age = lordDto.getAge();
+    }
+
+    /**
+     * Update.
+     *
+     * @param lordDto the {@link LordDto}
+     */
+    public void update(LordDto lordDto) {
+        this.name = lordDto.getName();
+        this.age = lordDto.getAge();
     }
 
 }

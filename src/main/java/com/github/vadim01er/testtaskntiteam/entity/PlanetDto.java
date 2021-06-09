@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @Validated
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlanetDTO {
+public class PlanetDto {
     @NotBlank
     private String name;
 }

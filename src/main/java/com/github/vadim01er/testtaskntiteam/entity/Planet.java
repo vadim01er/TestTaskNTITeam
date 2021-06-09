@@ -17,7 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * Entity class Planet.
+ * The type {@link Planet}.
  */
 @Getter
 @Setter
@@ -35,19 +35,26 @@ public class Planet {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "lord_id")
-    @JsonIgnoreProperties({"planets", "hibernateLazyInitializer"})
+    @JsonIgnoreProperties({"planets"})
     private Lord lord;
 
-    public Planet(String name, Lord lord) {
-        this.name = name;
+    /**
+     * Instantiates a new {@link Planet}.
+     *
+     * @param planetDto the {@link PlanetDto}
+     * @param lord the {@link Lord}
+     */
+    public Planet(PlanetDto planetDto, Lord lord) {
+        this.name = planetDto.getName();
         this.lord = lord;
     }
 
-    public PlanetDTO toDTO() {
-        return new PlanetDTO(name);
-    }
-
-    public void update(PlanetDTO planetDTO) {
-        this.name = planetDTO.getName();
+    /**
+     * Update.
+     *
+     * @param planetDto the {@link PlanetDto}
+     */
+    public void update(PlanetDto planetDto) {
+        this.name = planetDto.getName();
     }
 }
