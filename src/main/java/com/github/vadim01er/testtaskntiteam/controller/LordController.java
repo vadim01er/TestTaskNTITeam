@@ -7,7 +7,7 @@ import com.github.vadim01er.testtaskntiteam.entity.PlanetDTO;
 import com.github.vadim01er.testtaskntiteam.exception.LordIsExistsException;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetIsExistsException;
-import com.github.vadim01er.testtaskntiteam.service.LordService;
+import com.github.vadim01er.testtaskntiteam.service.LordServiceImpl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,46 +28,52 @@ import java.util.List;
 @Validated
 public class LordController {
 
-    private final LordService lordService;
+    private final LordServiceImpl lordServiceImpl;
 
-    public LordController(LordService lordService) {
-        this.lordService = lordService;
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable Long id) throws LordNotFoundException {
-        LordDTO lordDTO = lordService.getById(id);
-        return ResponseEntity.ok(lordDTO);
+    public LordController(LordServiceImpl lordServiceImpl) {
+        this.lordServiceImpl = lordServiceImpl;
     }
 
     @GetMapping()
     public ResponseEntity<Object> getAll() {
-        List<Lord> lords = lordService.getAll();
+        List<Lord> lords = lordServiceImpl.getAll();
         return ResponseEntity.ok(lords);
+    }
+
+    @GetMapping("/loafers")
+    public ResponseEntity<Object> getLoafers() {
+        List<Lord> lords = lordServiceImpl.getLoafers();
+        return ResponseEntity.ok(lords);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@PathVariable Long id) throws LordNotFoundException {
+        Lord lord = lordServiceImpl.getById(id);
+        return ResponseEntity.ok(lord);
     }
 
     @GetMapping("/top")
     public ResponseEntity<Object> getTop() {
-        List<Lord> lords = lordService.getTopTen();
+        List<Lord> lords = lordServiceImpl.getTopTen();
         return ResponseEntity.ok(lords);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> post(@RequestBody LordDTO lordDTO) throws LordIsExistsException {
-        Lord put = lordService.put(lordDTO);
+        Lord put = lordServiceImpl.put(lordDTO);
         return ResponseEntity.ok(put);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> putPlanet(@PathVariable("id") Long id, @Valid @RequestBody PlanetDTO planetDTO)
             throws LordNotFoundException, PlanetIsExistsException {
-        Planet planet = lordService.putPlanet(id, planetDTO);
+        Planet planet = lordServiceImpl.putPlanet(id, planetDTO);
         return ResponseEntity.ok(planet);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(@PathVariable Long id) throws LordNotFoundException {
-        lordService.deleteById(id);
+        lordServiceImpl.deleteById(id);
         return ResponseEntity.ok("ok");
     }
 }

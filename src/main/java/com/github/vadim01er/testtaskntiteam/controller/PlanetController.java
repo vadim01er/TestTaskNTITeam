@@ -5,7 +5,7 @@ import com.github.vadim01er.testtaskntiteam.entity.PlanetDTO;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetIsExistsException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
-import com.github.vadim01er.testtaskntiteam.service.PlanetService;
+import com.github.vadim01er.testtaskntiteam.service.PlanetServiceImpl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,55 +19,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
-
+@Validated
 @RestController
 @RequestMapping(value = "api/v1/planets", produces = MediaType.APPLICATION_JSON_VALUE)
-@Validated
 public class PlanetController {
 
-    private final PlanetService planetService;
+    private final PlanetServiceImpl planetServiceImpl;
 
-    public PlanetController(PlanetService planetService) {
-        this.planetService = planetService;
+    public PlanetController(PlanetServiceImpl planetServiceImpl) {
+        this.planetServiceImpl = planetServiceImpl;
     }
 
     @GetMapping()
     public ResponseEntity<Object> getAll() {
-        List<Planet> planets = planetService.getAll();
+        List<Planet> planets = planetServiceImpl.getAll();
         return ResponseEntity.ok(planets);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable Long id) throws PlanetNotFoundException {
-        PlanetDTO planetDTO = planetService.getById(id);
-        return ResponseEntity.ok(planetDTO);
+        Planet planet = planetServiceImpl.getById(id);
+        return ResponseEntity.ok(planet);
     }
 
     @PostMapping()
-    public ResponseEntity<Object> add(@RequestBody PlanetDTO planetDTO)throws PlanetIsExistsException {
-        Planet add = planetService.add(planetDTO);
+    public ResponseEntity<Object> add(@Valid @RequestBody PlanetDTO planetDTO)
+            throws PlanetIsExistsException, LordNotFoundException {
+        Planet add = planetServiceImpl.add(planetDTO);
         return ResponseEntity.ok(add);
     }
 
     @PutMapping("/{id}/update_lord")
     public ResponseEntity<Object> updateLord(@PathVariable("id") Long planetId, @RequestParam("lord_id") Long lordId)
             throws LordNotFoundException, PlanetNotFoundException {
-        Planet update = planetService.setLord(planetId, lordId);
+        Planet update = planetServiceImpl.setLord(planetId, lordId);
+        System.out.println(update);
         return ResponseEntity.ok(update);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable("id") Long planetId, @RequestBody PlanetDTO planetDTO)
             throws PlanetNotFoundException {
-        Planet update = planetService.update(planetId, planetDTO);
+        Planet update = planetServiceImpl.update(planetId, planetDTO);
         return ResponseEntity.ok(update);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(@PathVariable Long id) throws PlanetNotFoundException {
-        planetService.deleteById(id);
+        planetServiceImpl.deleteById(id);
         return ResponseEntity.ok("ok");
     }
 }

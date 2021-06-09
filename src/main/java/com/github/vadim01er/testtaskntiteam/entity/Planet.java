@@ -1,8 +1,11 @@
 package com.github.vadim01er.testtaskntiteam.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,7 +16,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@Data
+@Getter
+@Setter
+@ToString(exclude = "lord")
+@EqualsAndHashCode
 @Entity
 @Table(name = "planets")
 @NoArgsConstructor
@@ -24,15 +30,16 @@ public class Planet {
 
     private String name;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lord_id"/*, nullable = false*/)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "lord_id")
+    @JsonIgnoreProperties({"planets", "hibernateLazyInitializer"})
     private Lord lord;
 
     public Planet(String name, Lord lord) {
         this.name = name;
         this.lord = lord;
     }
+
     public PlanetDTO toDTO() {
         return new PlanetDTO(name);
     }
