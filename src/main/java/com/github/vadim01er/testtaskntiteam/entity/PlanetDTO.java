@@ -7,6 +7,9 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * DTO class use for validation data for {@link Planet}.
+ */
 @Getter
 @Validated
 @NoArgsConstructor

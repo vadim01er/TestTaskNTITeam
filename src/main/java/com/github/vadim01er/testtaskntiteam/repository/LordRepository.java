@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <p>
- * This is class LordRepository is Repository.
+ * This is class LordRepository is a Repository.
  * </p>
  * <p>
  * He extends {@link JpaRepository} with parameters

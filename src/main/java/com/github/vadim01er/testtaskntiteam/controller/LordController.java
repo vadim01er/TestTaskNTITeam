@@ -23,9 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Controller for request mapping "api/v1/lords".
+ */
+@Validated
 @RestController
 @RequestMapping(value = "api/v1/lords", produces = MediaType.APPLICATION_JSON_VALUE)
-@Validated
 public class LordController {
 
     private final LordServiceImpl lordServiceImpl;
@@ -47,7 +50,8 @@ public class LordController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable Long id) throws LordNotFoundException {
+    public ResponseEntity<Object> getById(@PathVariable Long id)
+            throws LordNotFoundException {
         Lord lord = lordServiceImpl.getById(id);
         return ResponseEntity.ok(lord);
     }
@@ -59,20 +63,24 @@ public class LordController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> post(@RequestBody LordDTO lordDTO) throws LordIsExistsException {
+    public ResponseEntity<Object> post(@RequestBody LordDTO lordDTO)
+            throws LordIsExistsException {
         Lord put = lordServiceImpl.put(lordDTO);
         return ResponseEntity.ok(put);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> putPlanet(@PathVariable("id") Long id, @Valid @RequestBody PlanetDTO planetDTO)
-            throws LordNotFoundException, PlanetIsExistsException {
+    public ResponseEntity<Object> putPlanet(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody PlanetDTO planetDTO
+    ) throws LordNotFoundException, PlanetIsExistsException {
         Planet planet = lordServiceImpl.putPlanet(id, planetDTO);
         return ResponseEntity.ok(planet);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteById(@PathVariable Long id) throws LordNotFoundException {
+    public ResponseEntity<Object> deleteById(@PathVariable Long id)
+            throws LordNotFoundException {
         lordServiceImpl.deleteById(id);
         return ResponseEntity.ok("ok");
     }

@@ -16,6 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * Entity class Planet.
+ */
 @Getter
 @Setter
 @ToString(exclude = "lord")

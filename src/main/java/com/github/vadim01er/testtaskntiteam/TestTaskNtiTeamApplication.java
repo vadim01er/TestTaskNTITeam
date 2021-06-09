@@ -3,6 +3,9 @@ package com.github.vadim01er.testtaskntiteam;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Main class for project TestTaskNTITeamSpring Boot.
+ */
 @SpringBootApplication
 public class TestTaskNtiTeamApplication {
 

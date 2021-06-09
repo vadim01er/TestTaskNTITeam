@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+/**
+ * This class PlanetServiceImpl implements {@link PlanetService}.
+ */
 @Service
 @AllArgsConstructor
 public class PlanetServiceImpl implements PlanetService {

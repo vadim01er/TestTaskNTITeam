@@ -17,8 +17,9 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- *
+ * Entity class Lord.
  */
 @Getter
 @Setter

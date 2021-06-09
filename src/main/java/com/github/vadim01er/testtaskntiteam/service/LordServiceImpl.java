@@ -9,6 +9,7 @@ import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetIsExistsException;
 import com.github.vadim01er.testtaskntiteam.repository.LordRepository;
 import com.github.vadim01er.testtaskntiteam.repository.PlanetRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -17,24 +18,13 @@ import java.util.List;
 
 /**
  * This class LordServiceImpl implements {@link LordService}.
- *
- *
  */
 @Service
+@AllArgsConstructor
 public class LordServiceImpl implements LordService {
 
     private final LordRepository lordRepository;
     private final PlanetRepository planetRepository;
-
-    /**
-     * Constructor
-     * @param lordRepository {@link LordRepository}
-     * @param planetRepository {@link PlanetRepository}
-     */
-    public LordServiceImpl(LordRepository lordRepository, PlanetRepository planetRepository) {
-        this.lordRepository = lordRepository;
-        this.planetRepository = planetRepository;
-    }
 
     @Override
     public Lord getById(Long id) throws LordNotFoundException {

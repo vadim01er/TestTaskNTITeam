@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
+/**
+ * Controller for request mapping "api/v1/planets".
+ */
 @Validated
 @RestController
 @RequestMapping(value = "api/v1/planets", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,35 +44,40 @@ public class PlanetController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable Long id) throws PlanetNotFoundException {
+    public ResponseEntity<Object> getById(@Min(0) @PathVariable Long id)
+            throws PlanetNotFoundException {
         Planet planet = planetServiceImpl.getById(id);
         return ResponseEntity.ok(planet);
     }
 
     @PostMapping()
     public ResponseEntity<Object> add(@Valid @RequestBody PlanetDTO planetDTO)
-            throws PlanetIsExistsException, LordNotFoundException {
+            throws PlanetIsExistsException {
         Planet add = planetServiceImpl.add(planetDTO);
         return ResponseEntity.ok(add);
     }
 
     @PutMapping("/{id}/update_lord")
-    public ResponseEntity<Object> updateLord(@PathVariable("id") Long planetId, @RequestParam("lord_id") Long lordId)
-            throws LordNotFoundException, PlanetNotFoundException {
+    public ResponseEntity<Object> updateLord(
+            @PathVariable("id") Long planetId,
+            @RequestParam("lord_id") Long lordId
+    ) throws LordNotFoundException, PlanetNotFoundException {
         Planet update = planetServiceImpl.setLord(planetId, lordId);
-        System.out.println(update);
         return ResponseEntity.ok(update);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable("id") Long planetId, @RequestBody PlanetDTO planetDTO)
-            throws PlanetNotFoundException {
+    public ResponseEntity<Object> update(
+            @PathVariable("id") Long planetId,
+            @RequestBody PlanetDTO planetDTO
+    ) throws PlanetNotFoundException {
         Planet update = planetServiceImpl.update(planetId, planetDTO);
         return ResponseEntity.ok(update);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteById(@PathVariable Long id) throws PlanetNotFoundException {
+    public ResponseEntity<Object> deleteById(@PathVariable Long id)
+            throws PlanetNotFoundException {
         planetServiceImpl.deleteById(id);
         return ResponseEntity.ok("ok");
     }
