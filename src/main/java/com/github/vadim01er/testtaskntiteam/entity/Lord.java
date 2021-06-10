@@ -60,4 +60,18 @@ public class Lord {
         this.age = lordDto.getAge();
     }
 
+    /**
+     * Convert to {@link LordDto}.
+     *
+     * @return the {@link LordDto}
+     */
+    public LordDto toDto() {
+        List<PlanetDto> planetDtoList = new ArrayList<>(this.planets.size());
+        LordDto lordDto = new LordDto(this.getId(), this.getName(), this.getAge(), planetDtoList);
+        for (Planet planet : this.planets) {
+            planetDtoList.add(new PlanetDto(planet.getId(), planet.getName(), lordDto));
+        }
+        return lordDto;
+    }
+
 }

@@ -51,7 +51,7 @@ public class LordController {
      */
     @GetMapping()
     public ResponseEntity<Object> getAll() {
-        List<Lord> lords = lordServiceImpl.getAll();
+        List<LordDto> lords = lordServiceImpl.getAll();
         return ResponseEntity.ok(lords);
     }
 
@@ -62,7 +62,7 @@ public class LordController {
      */
     @GetMapping("/loafers")
     public ResponseEntity<Object> getLoafers() {
-        List<Lord> lords = lordServiceImpl.getLoafers();
+        List<LordDto> lords = lordServiceImpl.getLoafers();
         return ResponseEntity.ok(lords);
     }
 
@@ -70,25 +70,25 @@ public class LordController {
      * Gets by id.
      *
      * @param id the id ({@link Long}) of {@link Lord}
-     * @return the {@link Lord}
+     * @return the {@link LordDto}
      * @throws LordNotFoundException the lord not found exception
      */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(
             @Min(0) @PathVariable Long id
     ) throws LordNotFoundException {
-        Lord lord = lordServiceImpl.getById(id);
+        LordDto lord = lordServiceImpl.getById(id);
         return ResponseEntity.ok(lord);
     }
 
     /**
      * Gets top.
      *
-     * @return the {@link List} of top {@link Lord}
+     * @return the {@link List} of top {@link LordDto}
      */
     @GetMapping("/top")
     public ResponseEntity<Object> getTop() {
-        List<Lord> lords = lordServiceImpl.getTopTen();
+        List<LordDto> lords = lordServiceImpl.getTopTen();
         return ResponseEntity.ok(lords);
     }
 
@@ -102,7 +102,7 @@ public class LordController {
     public ResponseEntity<Object> post(
             @Valid @RequestBody LordDto lordDto
     ) {
-        Lord put = lordServiceImpl.add(lordDto);
+        LordDto put = lordServiceImpl.add(lordDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(put);
     }
 
@@ -119,7 +119,7 @@ public class LordController {
             @Min(0) @PathVariable("id") Long id,
             @Valid @RequestBody PlanetDto planetDto
     ) throws LordNotFoundException {
-        Planet planet = lordServiceImpl.addPlanet(id, planetDto);
+        PlanetDto planet = lordServiceImpl.addPlanet(id, planetDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(planet);
     }
 
@@ -137,7 +137,7 @@ public class LordController {
             @Min(0) @PathVariable("id") Long lordId,
             @Min(0) @RequestParam("planet_id") Long planetId
     ) throws LordNotFoundException, PlanetNotFoundException {
-        Planet update = lordServiceImpl.assignToManagePlanet(lordId, planetId);
+        PlanetDto update = lordServiceImpl.assignToManagePlanet(lordId, planetId);
         return ResponseEntity.ok(update);
     }
 
@@ -154,7 +154,7 @@ public class LordController {
             @Min(0) @PathVariable("id") Long id,
             @Valid @RequestBody LordDto lordDto
     ) throws LordNotFoundException {
-        Lord update = lordServiceImpl.update(id, lordDto);
+        LordDto update = lordServiceImpl.update(id, lordDto);
         return ResponseEntity.ok(update);
     }
 

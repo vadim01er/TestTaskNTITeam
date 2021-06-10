@@ -171,6 +171,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleAllException(
             Exception ex
     ) {
+//        ex.printStackTrace();
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(
                         HttpStatus.BAD_REQUEST,

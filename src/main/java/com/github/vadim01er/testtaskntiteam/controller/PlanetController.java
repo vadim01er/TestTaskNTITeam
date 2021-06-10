@@ -46,7 +46,7 @@ public class PlanetController {
      */
     @GetMapping()
     public ResponseEntity<Object> getAll() {
-        List<Planet> planets = planetServiceImpl.getAll();
+        List<PlanetDto> planets = planetServiceImpl.getAll();
         return ResponseEntity.ok(planets);
     }
 
@@ -61,7 +61,7 @@ public class PlanetController {
     public ResponseEntity<Object> getById(
             @Min(0) @PathVariable Long id
     ) throws PlanetNotFoundException {
-        Planet planet = planetServiceImpl.getById(id);
+        PlanetDto planet = planetServiceImpl.getById(id);
         return ResponseEntity.ok(planet);
     }
 
@@ -75,7 +75,7 @@ public class PlanetController {
     public ResponseEntity<Object> add(
             @Valid @RequestBody PlanetDto planetDto
     ) {
-        Planet add = planetServiceImpl.add(planetDto);
+        PlanetDto add = planetServiceImpl.add(planetDto);
         return ResponseEntity.ok(add);
     }
 
@@ -92,7 +92,7 @@ public class PlanetController {
             @Min(0) @PathVariable("id") Long planetId,
             @Valid @RequestBody PlanetDto planetDto
     ) throws PlanetNotFoundException {
-        Planet update = planetServiceImpl.update(planetId, planetDto);
+        PlanetDto update = planetServiceImpl.update(planetId, planetDto);
         return ResponseEntity.ok(update);
     }
 

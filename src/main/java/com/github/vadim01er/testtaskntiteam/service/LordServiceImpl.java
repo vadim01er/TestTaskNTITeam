@@ -12,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class LordServiceImpl implements {@link LordService}.
@@ -24,52 +25,66 @@ public class LordServiceImpl implements LordService {
     private final PlanetServiceImpl planetService;
 
     @Override
-    public Lord getById(Long id) throws LordNotFoundException {
+    public LordDto getById(Long id) throws LordNotFoundException {
+        return lordRepository.findById(id).map(Lord::toDto)
+                .orElseThrow(() -> new LordNotFoundException(id));
+    }
+
+    public Lord getLordById(Long id) throws LordNotFoundException {
         return lordRepository.findById(id)
                 .orElseThrow(() -> new LordNotFoundException(id));
     }
 
     @Override
-    public List<Lord> getTopTen() {
-        return lordRepository.findTop10ByOrderByAge();
+    public List<LordDto> getTopTen() {
+        return lordRepository.findTop10ByOrderByAge().stream()
+                .map(Lord::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Lord> getLoafers() {
-        return lordRepository.findAllLoafers();
+    public List<LordDto> getLoafers() {
+        return lordRepository.findAllLoafers().stream()
+                .map(Lord::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Lord> getAll() {
-        return lordRepository.findAll();
+    public List<LordDto> getAll() {
+        return lordRepository.findAll().stream()
+                .map(Lord::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Lord add(LordDto lordDto) {
-        return lordRepository.save(new Lord(lordDto));
+    public LordDto add(LordDto lordDto) {
+        return lordRepository.save(new Lord(lordDto))
+                .toDto();
     }
 
     @Override
-    public Planet addPlanet(Long id, PlanetDto planetDto)
+    public PlanetDto addPlanet(Long id, PlanetDto planetDto)
             throws LordNotFoundException {
-        Lord lord = getById(id);
+        Lord lord = getLordById(id);
         return planetService.add(planetDto, lord);
     }
 
     @Override
-    public Planet assignToManagePlanet(Long lordId, Long planetId)
+    public PlanetDto assignToManagePlanet(Long lordId, Long planetId)
             throws LordNotFoundException, PlanetNotFoundException {
-        Lord lord = getById(lordId);
-        Planet planet = planetService.getById(planetId);
+        Lord lord = getLordById(lordId);
+        Planet planet = planetService.getPlanetById(planetId);
         planet.setLord(lord);
-        return planetService.save(planet);
+        return planetService.save(planet)
+                .toDto();
     }
 
     @Override
-    public Lord update(Long id, LordDto lordDto) throws LordNotFoundException {
-        Lord lord = getById(id);
+    public LordDto update(Long id, LordDto lordDto) throws LordNotFoundException {
+        Lord lord = getLordById(id);
         lord.update(lordDto);
-        return lordRepository.save(lord);
+        return lordRepository.save(lord)
+                .toDto();
     }
 
     @Override
