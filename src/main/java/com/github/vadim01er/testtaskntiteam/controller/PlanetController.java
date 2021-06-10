@@ -2,7 +2,6 @@ package com.github.vadim01er.testtaskntiteam.controller;
 
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
-import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.service.PlanetServiceImpl;
 import org.springframework.http.MediaType;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -79,24 +77,6 @@ public class PlanetController {
     ) {
         Planet add = planetServiceImpl.add(planetDto);
         return ResponseEntity.ok(add);
-    }
-
-    /**
-     * Set Lord to the {@link Planet}.
-     *
-     * @param planetId the planet id
-     * @param lordId   the lord id
-     * @return the response entity
-     * @throws LordNotFoundException   the lord not found exception
-     * @throws PlanetNotFoundException the planet not found exception
-     */
-    @PutMapping("/{id}/update_lord")
-    public ResponseEntity<Object> updateLord(
-            @Min(0) @PathVariable("id") Long planetId,
-            @Min(0) @RequestParam("lord_id") Long lordId
-    ) throws LordNotFoundException, PlanetNotFoundException {
-        Planet update = planetServiceImpl.setLord(planetId, lordId);
-        return ResponseEntity.ok(update);
     }
 
     /**

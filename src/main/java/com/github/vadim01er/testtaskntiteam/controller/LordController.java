@@ -5,7 +5,9 @@ import com.github.vadim01er.testtaskntiteam.entity.LordDto;
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
+import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.service.LordServiceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -55,7 +58,7 @@ public class LordController {
     /**
      * Gets loafers.
      *
-     * @return the {@link List} of {@link Lord} loafers (has no planet)
+     * @return the {@link List} of {@link Lord} loafers(has no planet)
      */
     @GetMapping("/loafers")
     public ResponseEntity<Object> getLoafers() {
@@ -100,7 +103,7 @@ public class LordController {
             @Valid @RequestBody LordDto lordDto
     ) {
         Lord put = lordServiceImpl.add(lordDto);
-        return ResponseEntity.ok(put);
+        return ResponseEntity.status(HttpStatus.CREATED).body(put);
     }
 
     /**
@@ -113,11 +116,29 @@ public class LordController {
      */
     @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> addPlanet(
-            @PathVariable("id") Long id,
+            @Min(0) @PathVariable("id") Long id,
             @Valid @RequestBody PlanetDto planetDto
     ) throws LordNotFoundException {
         Planet planet = lordServiceImpl.addPlanet(id, planetDto);
-        return ResponseEntity.ok(planet);
+        return ResponseEntity.status(HttpStatus.CREATED).body(planet);
+    }
+
+    /**
+     * Assign {@link Planet} to the {@link Lord}.
+     *
+     * @param lordId   the {@link Lord} id ({@link Long})
+     * @param planetId the {@link Planet} id ({@link Long})
+     * @return the response entity
+     * @throws LordNotFoundException   the lord not found exception
+     * @throws PlanetNotFoundException the planet not found exception
+     */
+    @PutMapping("/{id}/assign_planet")
+    public ResponseEntity<Object> updateLord(
+            @Min(0) @PathVariable("id") Long lordId,
+            @Min(0) @RequestParam("planet_id") Long planetId
+    ) throws LordNotFoundException, PlanetNotFoundException {
+        Planet update = lordServiceImpl.assignToManagePlanet(lordId, planetId);
+        return ResponseEntity.ok(update);
     }
 
     /**
@@ -130,7 +151,7 @@ public class LordController {
      */
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> update(
-            @PathVariable("id") Long id,
+            @Min(0) @PathVariable("id") Long id,
             @Valid @RequestBody LordDto lordDto
     ) throws LordNotFoundException {
         Lord update = lordServiceImpl.update(id, lordDto);
@@ -146,9 +167,9 @@ public class LordController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(
-            @PathVariable Long id
+            @Min(0) @PathVariable Long id
     ) throws LordNotFoundException {
         lordServiceImpl.deleteById(id);
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("ok");
     }
 }

@@ -1,6 +1,5 @@
 package com.github.vadim01er.testtaskntiteam.exception;
 
-import com.github.vadim01er.testtaskntiteam.json.ExceptionJsonResponse;
 import com.github.vadim01er.testtaskntiteam.response.ExceptionResponse;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
@@ -117,7 +116,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
      * Method handler {@link ConstraintViolationException}.
      *
      * @param ex {@link ConstraintViolationException}
-     * @return {@link ResponseEntity} with {@link ExceptionJsonResponse}
+     * @return {@link ResponseEntity} with {@link ExceptionResponse}
      */
     @org.springframework.web.bind.annotation.ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolationException(

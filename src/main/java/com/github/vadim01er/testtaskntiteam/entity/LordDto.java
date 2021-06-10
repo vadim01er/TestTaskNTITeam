@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * DTO class use for validation data for {@link Lord}.
@@ -22,6 +23,7 @@ public class LordDto {
     @Length(min = 1, max = 250)
     private String name;
 
+    @NotNull
     @Min(1)
     @Max(200)
     private Integer age;

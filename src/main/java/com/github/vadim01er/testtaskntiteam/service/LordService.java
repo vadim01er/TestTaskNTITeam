@@ -5,6 +5,7 @@ import com.github.vadim01er.testtaskntiteam.entity.LordDto;
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
+import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 
 import java.util.List;
 
@@ -59,6 +60,9 @@ public interface LordService {
      * @throws LordNotFoundException the lord not found exception
      */
     Planet addPlanet(Long id, PlanetDto planetDto) throws LordNotFoundException;
+
+    Planet assignToManagePlanet(Long lordId, Long planetId)
+            throws LordNotFoundException, PlanetNotFoundException;
 
     /**
      * Update lord.

@@ -5,8 +5,8 @@ import com.github.vadim01er.testtaskntiteam.entity.LordDto;
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
+import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.repository.LordRepository;
-import com.github.vadim01er.testtaskntiteam.repository.PlanetRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.List;
 public class LordServiceImpl implements LordService {
 
     private final LordRepository lordRepository;
-    private final PlanetRepository planetRepository;
+    private final PlanetServiceImpl planetService;
 
     @Override
     public Lord getById(Long id) throws LordNotFoundException {
@@ -53,16 +53,23 @@ public class LordServiceImpl implements LordService {
     public Planet addPlanet(Long id, PlanetDto planetDto)
             throws LordNotFoundException {
         Lord lord = getById(id);
-        return planetRepository.save(new Planet(planetDto, lord));
+        return planetService.add(planetDto, lord);
+    }
+
+    @Override
+    public Planet assignToManagePlanet(Long lordId, Long planetId)
+            throws LordNotFoundException, PlanetNotFoundException {
+        Lord lord = getById(lordId);
+        Planet planet = planetService.getById(planetId);
+        planet.setLord(lord);
+        return planetService.save(planet);
     }
 
     @Override
     public Lord update(Long id, LordDto lordDto) throws LordNotFoundException {
-        Lord lord = lordRepository.findById(id)
-                .orElseThrow(() -> new LordNotFoundException(id));
+        Lord lord = getById(id);
         lord.update(lordDto);
-        lordRepository.save(lord);
-        return lord;
+        return lordRepository.save(lord);
     }
 
     @Override
