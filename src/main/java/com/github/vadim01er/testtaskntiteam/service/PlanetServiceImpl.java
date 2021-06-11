@@ -10,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class PlanetServiceImpl implements {@link PlanetService}.
@@ -21,12 +22,27 @@ public class PlanetServiceImpl implements PlanetService {
     private final PlanetRepository planetRepository;
 
     @Override
-    public List<Planet> getAll() {
-        return planetRepository.findAll();
+    public List<PlanetDto> getAll() {
+        return planetRepository.findAll().stream()
+                .map(Planet::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Planet getById(Long id) throws PlanetNotFoundException {
+    public PlanetDto getById(Long id) throws PlanetNotFoundException {
+        return planetRepository.findById(id)
+                .map(Planet::toDto)
+                .orElseThrow(() -> new PlanetNotFoundException(id));
+    }
+
+    /**
+     * Gets {@link Planet} by id. (only in this package (default type method))
+     *
+     * @param id the the {@link Planet} id ({@link Long})
+     * @return the {@link Planet} by id
+     * @throws PlanetNotFoundException the planet not found exception
+     */
+    Planet getPlanetById(Long id) throws PlanetNotFoundException {
         return planetRepository.findById(id)
                 .orElseThrow(() -> new PlanetNotFoundException(id));
     }
@@ -48,21 +64,23 @@ public class PlanetServiceImpl implements PlanetService {
      * @param lord      the {@link Lord}
      * @return the {@link Planet}
      */
-    Planet add(PlanetDto planetDto, Lord lord) {
-        return planetRepository.save(new Planet(planetDto, lord));
+    PlanetDto add(PlanetDto planetDto, Lord lord) {
+        return planetRepository.save(new Planet(planetDto, lord))
+                .toDto();
     }
 
     @Override
-    public Planet add(PlanetDto planetDto) {
+    public PlanetDto add(PlanetDto planetDto) {
         return add(planetDto, null);
     }
 
     @Override
-    public Planet update(Long id, PlanetDto planetDto)
+    public PlanetDto update(Long id, PlanetDto planetDto)
             throws PlanetNotFoundException {
-        Planet planet = getById(id);
+        Planet planet = getPlanetById(id);
         planet.update(planetDto);
-        return planetRepository.save(planet);
+        return planetRepository.save(planet)
+                .toDto();
     }
 
     @Override

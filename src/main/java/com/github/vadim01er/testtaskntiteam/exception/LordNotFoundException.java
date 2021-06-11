@@ -12,4 +12,12 @@ public class LordNotFoundException extends Exception {
     public LordNotFoundException(Long id) {
         super("Lord by '" + id + "' not found.");
     }
+    /**
+     * Instantiates a new LordNotFoundException.
+     *
+     * @param id the id ({@link Long})
+     */
+    public LordNotFoundException() {
+        super("Lord not found.");
+    }
 }

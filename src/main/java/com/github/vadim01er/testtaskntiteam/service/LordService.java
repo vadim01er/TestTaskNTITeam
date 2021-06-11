@@ -1,8 +1,6 @@
 package com.github.vadim01er.testtaskntiteam.service;
 
-import com.github.vadim01er.testtaskntiteam.entity.Lord;
 import com.github.vadim01er.testtaskntiteam.entity.LordDto;
-import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
@@ -16,68 +14,77 @@ public interface LordService {
     /**
      * Gets by id.
      *
-     * @param id the id ({@link Long}) of {@link Lord}
-     * @return the {@link Lord}
+     * @param id the id ({@link Long}) of Lord
+     * @return the {@link LordDto}
      * @throws LordNotFoundException the lord not found exception
      */
-    Lord getById(Long id) throws LordNotFoundException;
+    LordDto getById(Long id) throws LordNotFoundException;
 
     /**
      * Gets top ten.
      *
-     * @return the {@link List} of top ten {@link Lord}
+     * @return the {@link List} of top ten {@link LordDto}
      */
-    List<Lord> getTopTen();
+    List<LordDto> getTopTen();
 
     /**
      * Gets loafers.
      *
-     * @return the {@link List} of {@link Lord} loafers (has no planet)
+     * @return the {@link List} of {@link LordDto} loafers (has no planet)
      */
-    List<Lord> getLoafers();
+    List<LordDto> getLoafers();
 
     /**
      * Gets all.
      *
-     * @return the {@link List} of all {@link Lord}
+     * @return the {@link List} of all {@link LordDto}
      */
-    List<Lord> getAll();
+    List<LordDto> getAll();
 
     /**
-     * Add {@link Lord}.
+     * Add Lord.
      *
      * @param lordDto the {@link LordDto}
-     * @return the {@link Lord}
+     * @return the {@link LordDto}
      */
-    Lord add(LordDto lordDto);
+    LordDto add(LordDto lordDto);
 
     /**
-     * Add a new {@link Planet} and link it to the {@link Lord}.
+     * Add a new Planet and link it to the Lord.
      *
-     * @param id        the id ({@link Long}) of {@link Lord}
+     * @param id        the id ({@link Long}) of Lord
      * @param planetDto the {@link PlanetDto}
-     * @return the {@link Planet}
+     * @return the {@link PlanetDto}
      * @throws LordNotFoundException the lord not found exception
      */
-    Planet addPlanet(Long id, PlanetDto planetDto) throws LordNotFoundException;
+    PlanetDto addPlanet(Long id, PlanetDto planetDto) throws LordNotFoundException;
 
-    Planet assignToManagePlanet(Long lordId, Long planetId)
+    /**
+     * Assign to manage planet dto.
+     *
+     * @param lordId   the id ({@link Long}) of Lord
+     * @param planetId the {@link PlanetDto} id
+     * @return the planet dto
+     * @throws LordNotFoundException   the lord not found exception
+     * @throws PlanetNotFoundException the planet not found exception
+     */
+    PlanetDto assignToManagePlanet(Long lordId, Long planetId)
             throws LordNotFoundException, PlanetNotFoundException;
 
     /**
      * Update lord.
      *
-     * @param id  the id ({@link Long}) of {@link Lord}
+     * @param id      the id ({@link Long}) of Lord
      * @param lordDto the lord dto
      * @return the lord
      * @throws LordNotFoundException the lord not found exception
      */
-    Lord update(Long id, LordDto lordDto) throws LordNotFoundException;
+    LordDto update(Long id, LordDto lordDto) throws LordNotFoundException;
 
     /**
      * Delete by id.
      *
-     * @param id the id ({@link Long}) of {@link Lord}
+     * @param id the id ({@link Long}) of Lord
      * @throws LordNotFoundException the lord not found exception
      */
     void deleteById(Long id) throws LordNotFoundException;

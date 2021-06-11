@@ -42,7 +42,6 @@ public class Planet {
      * Instantiates a new {@link Planet}.
      *
      * @param planetDto the {@link PlanetDto}
-     * @param lord the {@link Lord}
      */
     public Planet(PlanetDto planetDto, Lord lord) {
         this.name = planetDto.getName();
@@ -56,5 +55,16 @@ public class Planet {
      */
     public void update(PlanetDto planetDto) {
         this.name = planetDto.getName();
+    }
+
+    /**
+     * Convert to {@link PlanetDto}.
+     *
+     * @return the {@link PlanetDto}
+     */
+    public PlanetDto toDto() {
+        LordDto lordDto =
+                lord == null ? null : new LordDto(lord.getId(), lord.getName(), lord.getAge());
+        return new PlanetDto(this.id, this.name, lordDto);
     }
 }
