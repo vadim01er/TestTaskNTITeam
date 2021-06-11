@@ -121,7 +121,6 @@ public class LordController {
         LordDto put = lordServiceImpl.add(lordDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
                 .body(put);
     }
 
@@ -141,7 +140,6 @@ public class LordController {
         PlanetDto planet = lordServiceImpl.addPlanet(id, planetDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
                 .body(planet);
     }
 
@@ -192,6 +190,7 @@ public class LordController {
             @Min(0) @PathVariable Long id
     ) throws LordNotFoundException {
         lordServiceImpl.deleteById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("{\"status\": 204}");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("{\"status\": 204}");
     }
 }

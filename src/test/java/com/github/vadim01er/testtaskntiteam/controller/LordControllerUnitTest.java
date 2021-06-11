@@ -1,16 +1,10 @@
 package com.github.vadim01er.testtaskntiteam.controller;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.vadim01er.testtaskntiteam.entity.Lord;
-import com.github.vadim01er.testtaskntiteam.entity.LordDto;
-import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.service.LordServiceImpl;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.AnyOf;
+import com.github.vadim01er.testtaskntiteam.utils.Utils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,7 +17,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static com.github.vadim01er.testtaskntiteam.utils.Utils.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -31,111 +27,43 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class LordControllerUnitTest {
-    private final Long lordId = 12L;
-    private final Long planetId = 13L;
-    private final String someNameLord = "some name lord";
-    private final String someNamePlanet = "some name planet";
-    private final Integer lordAge = 20;
 
     private final String urlTemplate = "/api/v1/lords";
-
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
     @Autowired
     private MockMvc mvc;
     @MockBean
     private LordServiceImpl lordService;
 
-    private LordDto getLordDtoWithPlanetDto() {
-        return getLordWithPlanet().toDto();
-    }
-
-    private Lord getLordWithPlanet() {
-        Planet planet = new Planet() {{
-            setId(planetId);
-            setName(someNamePlanet);
-        }};
-        Lord lord = new Lord() {{
-            setId(lordId);
-            setName(someNameLord);
-            setAge(lordAge);
-            setPlanets(Collections.singletonList(planet));
-        }};
-        planet.setLord(lord);
-        return lord;
-    }
-
-    private LordDto getLordDto() {
-        return getLord(someNameLord, lordAge).toDto();
-    }
-
-    private Lord getLord(String name, Integer age) {
-        return new Lord() {{
-            setId(lordId);
-            setName(name);
-            setAge(age);
-            setPlanets(Collections.emptyList());
-        }};
-    }
-
-    private PlanetDto getPlanetDtoWithLord() {
-        Planet planet = new Planet() {{
-            setId(planetId);
-            setName(someNamePlanet);
-        }};
-        Lord lord = new Lord() {{
-            setId(lordId);
-            setName(someNameLord);
-            setAge(lordAge);
-            setPlanets(Collections.singletonList(planet));
-        }};
-        planet.setLord(lord);
-        return planet.toDto();
-    }
 
 
-    private LordDto getLordDto(String newName, Integer age) {
-        return getLord(newName, age).toDto();
-    }
-
-    private LordDto getLordDtoForPost() {
-        return new LordDto(someNameLord, lordAge);
-    }
-
-    private PlanetDto getPlanetDtoForPost() {
-        return new PlanetDto(someNamePlanet);
-    }
 
     @Test
     void getAll_ReturnStatusOk_andReturnLordDtoList() throws Exception {
         when(lordService.getAll()).thenReturn(Collections.singletonList(getLordDtoWithPlanetDto()));
-        mvc.perform(get("/api/v1/lords"))
+        mvc.perform(get(urlTemplate))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(lordId.intValue())))
-                .andExpect(jsonPath("$[0].name", is(someNameLord)))
-                .andExpect(jsonPath("$[0].age", is(lordAge)))
+                .andExpect(jsonPath("$[0].id", is(LORD_ID.intValue())))
+                .andExpect(jsonPath("$[0].name", is(SOME_NAME_LORD)))
+                .andExpect(jsonPath("$[0].age", is(LORD_AGE)))
                 .andExpect(jsonPath("$[0].planets", hasSize(1)))
                 .andExpect(jsonPath("$[0].planets[0].id", is(13)))
-                .andExpect(jsonPath("$[0].planets[0].name", is(someNamePlanet)));
+                .andExpect(jsonPath("$[0].planets[0].name", is(SOME_NAME_PLANET)));
     }
 
     @Test
     void getAll_ReturnStatusBadRequest_andReturnLordNotFoundException() throws Exception {
-        when(lordService.getLoafers()).thenReturn(Collections.emptyList());
+        when(lordService.getAll()).thenReturn(Collections.emptyList());
         mvc.perform(get(urlTemplate))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Lord not found.")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Lord not found.")));
+                .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
+                .andExpect(jsonPath("$.title", LORD_NOT_FOUND));
     }
 
     @Test
@@ -145,9 +73,9 @@ class LordControllerUnitTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(lordId.intValue())))
-                .andExpect(jsonPath("$[0].name", is(someNameLord)))
-                .andExpect(jsonPath("$[0].age", is(lordAge)))
+                .andExpect(jsonPath("$[0].id", is(LORD_ID.intValue())))
+                .andExpect(jsonPath("$[0].name", is(SOME_NAME_LORD)))
+                .andExpect(jsonPath("$[0].age", is(LORD_AGE)))
                 .andExpect(jsonPath("$[0].planets", hasSize(0)));
     }
 
@@ -155,38 +83,34 @@ class LordControllerUnitTest {
     void getLoafers_ReturnStatusBadRequest_AndReturnLordNotFoundException() throws Exception {
         when(lordService.getLoafers()).thenReturn(Collections.emptyList());
         mvc.perform(get(urlTemplate + "/loafers"))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Lord not found.")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Lord not found.")));
+                .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
+                .andExpect(jsonPath("$.title", LORD_NOT_FOUND));
     }
 
     @Test
     void getById_ReturnStatusOk_andReturnLordDto() throws Exception {
-        when(lordService.getById(lordId)).thenReturn(getLordDtoWithPlanetDto());
-        mvc.perform(get(urlTemplate + "/" + lordId))
+        when(lordService.getById(LORD_ID)).thenReturn(Utils.getLordDtoWithPlanetDto());
+        mvc.perform(get(urlTemplate + "/" + LORD_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(lordId.intValue())))
-                .andExpect(jsonPath("$.name", is(someNameLord)))
-                .andExpect(jsonPath("$.age", is(lordAge)))
+                .andExpect(jsonPath("$.id", is(LORD_ID.intValue())))
+                .andExpect(jsonPath("$.name", is(SOME_NAME_LORD)))
+                .andExpect(jsonPath("$.age", is(LORD_AGE)))
                 .andExpect(jsonPath("$.planets", hasSize(1)))
-                .andExpect(jsonPath("$.planets[0].id", is(planetId.intValue())))
-                .andExpect(jsonPath("$.planets[0].name", is(someNamePlanet)));
+                .andExpect(jsonPath("$.planets[0].id", is(PLANET_ID.intValue())))
+                .andExpect(jsonPath("$.planets[0].name", is(SOME_NAME_PLANET)));
     }
 
     @Test
     void getById_ReturnStatusBadRequest_andReturnLordNotFoundException() throws Exception {
-        when(lordService.getById(lordId)).thenThrow(new LordNotFoundException(lordId));
-        mvc.perform(get(urlTemplate + "/" + lordId))
-                .andExpect(status().isBadRequest())
+        when(lordService.getById(LORD_ID)).thenThrow(new LordNotFoundException(LORD_ID));
+        mvc.perform(get(urlTemplate + "/" + LORD_ID))
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Lord by '" + lordId + "' not found.")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Lord by '" + lordId + "' not found.")));
+                .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
+                .andExpect(jsonPath("$.title", is("Lord by '" + LORD_ID + "' not found.")));
     }
 
     @Test
@@ -196,9 +120,9 @@ class LordControllerUnitTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(lordId.intValue())))
-                .andExpect(jsonPath("$[0].name", is(someNameLord)))
-                .andExpect(jsonPath("$[0].age", is(lordAge)))
+                .andExpect(jsonPath("$[0].id", is(LORD_ID.intValue())))
+                .andExpect(jsonPath("$[0].name", is(SOME_NAME_LORD)))
+                .andExpect(jsonPath("$[0].age", is(LORD_AGE)))
                 .andExpect(jsonPath("$[0].planets", hasSize(0)));
     }
 
@@ -206,48 +130,40 @@ class LordControllerUnitTest {
     void getTop_ReturnStatusBadRequest_AndReturnLordNotFoundException() throws Exception {
         when(lordService.getLoafers()).thenReturn(Collections.emptyList());
         mvc.perform(get(urlTemplate + "/top"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Lord not found.")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Lord not found.")));
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
+                .andExpect(jsonPath("$.title", LORD_NOT_FOUND));
     }
 
     @Test
     void post_ReturnStatusCreated_AndReturnLordDto() throws Exception {
-        LordDto lordDto = getLordDtoForPost();
         when(lordService.add(any())).thenReturn(getLordDto());
         mvc.perform(
                 post(urlTemplate)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(lordDto)))
+                        .content(OBJECT_MAPPER.writeValueAsString(getLordDtoForPost())))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(lordId.intValue())))
-                .andExpect(jsonPath("$.name", is(someNameLord)))
-                .andExpect(jsonPath("$.age", is(lordAge)))
+                .andExpect(jsonPath("$.id", is(LORD_ID.intValue())))
+                .andExpect(jsonPath("$.name", is(SOME_NAME_LORD)))
+                .andExpect(jsonPath("$.age", is(LORD_AGE)))
                 .andExpect(jsonPath("$.planets", is(Collections.emptyList())));
     }
 
     @Test
     void post_ReturnStatusBadRequest_AndReturnInvalidJsonException() throws Exception {
-        AnyOf<String> mustAnyOf = anyOf(
-                is("length must be between 1 and 250"),
-                is("must not be blank")
-        );
-
         mvc.perform(
                 post(urlTemplate)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getLordDto())))
+                        .content(OBJECT_MAPPER.writeValueAsString(getLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", Matchers.startsWith("No valid json field:")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(2)))
-                .andExpect(jsonPath("$.errors[0]", is("must be null")))
-                .andExpect(jsonPath("$.errors[1]", is("must be null")));
+                .andExpect(jsonPath("$.errors[0]", Utils.LORD_MUST_BE_NULL))
+                .andExpect(jsonPath("$.errors[1]", Utils.LORD_MUST_BE_NULL));
 
         mvc.perform(
                 post(urlTemplate)
@@ -256,10 +172,10 @@ class LordControllerUnitTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("No valid json field: [name]")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(2)))
-                .andExpect(jsonPath("$.errors[0]", mustAnyOf))
-                .andExpect(jsonPath("$.errors[1]", mustAnyOf));
+                .andExpect(jsonPath("$.errors[0]", Utils.MUST_ANY_OF))
+                .andExpect(jsonPath("$.errors[1]", Utils.MUST_ANY_OF));
 
         mvc.perform(
                 post(urlTemplate)
@@ -268,9 +184,9 @@ class LordControllerUnitTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("No valid json field: [age]")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("must be greater than or equal to 1")));
+                .andExpect(jsonPath("$.errors[0]", AGE_GREATER));
 
         mvc.perform(
                 post(urlTemplate)
@@ -279,9 +195,9 @@ class LordControllerUnitTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("No valid json field: [age]")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("must be less than or equal to 200")));
+                .andExpect(jsonPath("$.errors[0]", AGE_LESS));
     }
 
     @Test
@@ -293,102 +209,89 @@ class LordControllerUnitTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Unformed json in body")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Unformed json in body")));
+                .andExpect(jsonPath("$.title", is("Invalid json in body")));
     }
 
     @Test
     void addPlanet_ReturnStatusCreated_AndReturnPlanetDto() throws Exception {
         PlanetDto planetDto = getPlanetDtoForPost();
-        when(lordService.addPlanet(eq(lordId), eq(planetDto))).thenReturn(getPlanetDtoWithLord());
+        when(lordService.addPlanet(eq(LORD_ID), eq(planetDto))).thenReturn(getPlanetDtoWithLord());
         mvc.perform(
-                post(urlTemplate + "/" + lordId)
+                post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(planetDto)))
+                        .content(OBJECT_MAPPER.writeValueAsString(planetDto)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(planetId.intValue())))
-                .andExpect(jsonPath("$.name", is(someNamePlanet)))
-                .andExpect(jsonPath("$.lord.id", is(lordId.intValue())))
-                .andExpect(jsonPath("$.lord.name", is(someNameLord)))
-                .andExpect(jsonPath("$.lord.age", is(lordAge)));
+                .andExpect(jsonPath("$.id", is(PLANET_ID.intValue())))
+                .andExpect(jsonPath("$.name", is(SOME_NAME_PLANET)))
+                .andExpect(jsonPath("$.lord.id", is(LORD_ID.intValue())))
+                .andExpect(jsonPath("$.lord.name", is(SOME_NAME_LORD)))
+                .andExpect(jsonPath("$.lord.age", is(LORD_AGE)));
     }
 
     @Test
     void addPlanet_ReturnStatusBadRequest_AndReturnInvalidJsonException() throws Exception {
-        PlanetDto planetDto = getPlanetDtoWithLord();
-        AnyOf<String> mustAnyOf = anyOf(
-                is("length must be between 1 and 250"),
-                is("must not be blank")
-        );
-
         mvc.perform(
-                post(urlTemplate + "/" + lordId)
+                post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(planetDto)))
+                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLord())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", Matchers.startsWith("No valid json field:")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(2)))
-                .andExpect(jsonPath("$.errors[0]", is("must be null")))
-                .andExpect(jsonPath("$.errors[1]", is("must be null")));
+                .andExpect(jsonPath("$.errors[0]", Utils.PLANET_MUST_BE_NULL))
+                .andExpect(jsonPath("$.errors[1]", Utils.PLANET_MUST_BE_NULL));
 
         mvc.perform(
-                post(urlTemplate + "/" + lordId)
+                post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("No valid json field: [name]")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(2)))
-                .andExpect(jsonPath("$.errors[0]", mustAnyOf))
-                .andExpect(jsonPath("$.errors[0]", mustAnyOf));
-
+                .andExpect(jsonPath("$.errors[0]", Utils.MUST_ANY_OF))
+                .andExpect(jsonPath("$.errors[0]", Utils.MUST_ANY_OF));
     }
 
     @Test
     void addPlanet_ReturnStatusBadRequest_AndReturnUnformedJsonException() throws Exception {
-        when(lordService.addPlanet(eq(lordId), any())).thenReturn(getPlanetDtoWithLord());
+        when(lordService.addPlanet(eq(LORD_ID), any())).thenReturn(getPlanetDtoWithLord());
         mvc.perform(
-                post(urlTemplate + "/" + lordId)
+                post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ \"name\": \"sdf }"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Unformed json in body")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Unformed json in body")));
+                .andExpect(jsonPath("$.title", is("Invalid json in body")));
     }
 
     @Test
     void addPlanet_ReturnStatusBadRequest_AndReturnLordNotFoundException() throws Exception {
-        when(lordService.addPlanet(eq(lordId), any())).thenThrow(new LordNotFoundException(lordId));
+        when(lordService.addPlanet(eq(LORD_ID), any())).thenThrow(new LordNotFoundException(LORD_ID));
         mvc.perform(
-                post(urlTemplate + "/" + lordId)
+                post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ \"name\": \"sdf\" }"))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Lord by '" + lordId + "' not found.")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Lord by '" + lordId + "' not found.")));
+                .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
+                .andExpect(jsonPath("$.title", is("Lord by '" + LORD_ID + "' not found.")));
     }
 
     @Test
-    void update_ReturnStatusCreated_AndReturnLordDto() throws Exception {
-        when(lordService.update(eq(lordId), any())).thenReturn(getLordDto("new name", 21));
+    void update_ReturnStatusOk_AndReturnLordDto() throws Exception {
+        when(lordService.update(eq(LORD_ID), any())).thenReturn(getLordDto("new name", 21));
         mvc.perform(
-                put(urlTemplate + "/" + lordId)
+                put(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"new name\", \"age\": 21}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(lordId.intValue())))
+                .andExpect(jsonPath("$.id", is(LORD_ID.intValue())))
                 .andExpect(jsonPath("$.name", is("new name")))
                 .andExpect(jsonPath("$.age", is(21)))
                 .andExpect(jsonPath("$.planets", is(Collections.emptyList())));
@@ -396,121 +299,111 @@ class LordControllerUnitTest {
 
     @Test
     void update_ReturnStatusBadRequest_AndReturnLordNotFoundException() throws Exception {
-        when(lordService.update(eq(lordId), any())).thenThrow(new LordNotFoundException(lordId));
+        when(lordService.update(eq(LORD_ID), any())).thenThrow(new LordNotFoundException(LORD_ID));
         mvc.perform(
-                put(urlTemplate + "/" + lordId)
+                put(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"new name\", \"age\": 21}"))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Lord by '" + lordId + "' not found.")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Lord by '" + lordId + "' not found.")));
+                .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
+                .andExpect(jsonPath("$.title", is("Lord by '" + LORD_ID + "' not found.")));
     }
 
     @Test
     void update_ReturnStatusBadRequest_AndReturnInvalidJsonException() throws Exception {
-        AnyOf<String> mustAnyOf = anyOf(
-                is("length must be between 1 and 250"),
-                is("must not be blank")
-        );
         mvc.perform(
-                put(urlTemplate + "/" + lordId)
+                put(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(getLordDto())))
+                        .content(OBJECT_MAPPER.writeValueAsString(getLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", Matchers.startsWith("No valid json field:")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(2)))
-                .andExpect(jsonPath("$.errors[0]", is("must be null")))
-                .andExpect(jsonPath("$.errors[1]", is("must be null")));
+                .andExpect(jsonPath("$.errors[0]", Utils.LORD_MUST_BE_NULL))
+                .andExpect(jsonPath("$.errors[1]", Utils.LORD_MUST_BE_NULL));
 
         mvc.perform(
-                put(urlTemplate + "/" + lordId)
+                put(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"\", \"age\":10}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("No valid json field: [name]")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(2)))
-                .andExpect(jsonPath("$.errors[0]", mustAnyOf))
-                .andExpect(jsonPath("$.errors[1]", mustAnyOf));
+                .andExpect(jsonPath("$.errors[0]", Utils.MUST_ANY_OF))
+                .andExpect(jsonPath("$.errors[1]", Utils.MUST_ANY_OF));
 
         mvc.perform(
-                put(urlTemplate + "/" + lordId)
+                put(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"some name\", \"age\":0}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("No valid json field: [age]")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("must be greater than or equal to 1")));
+                .andExpect(jsonPath("$.errors[0]", AGE_GREATER));
 
         mvc.perform(
-                put(urlTemplate + "/" + lordId)
+                put(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"some name\", \"age\":201}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("No valid json field: [age]")))
+                .andExpect(jsonPath("$.title", ARGUMENT_NOT_VALID))
                 .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("must be less than or equal to 200")));
+                .andExpect(jsonPath("$.errors[0]", AGE_LESS));
     }
 
     @Test
     void assignPlanetToLord_ReturnStatusOk_AndReturnPlanetDto() throws Exception {
-        when(lordService.assignToManagePlanet(eq(lordId), eq(planetId)))
+        when(lordService.assignToManagePlanet(eq(LORD_ID), eq(PLANET_ID)))
                 .thenReturn(getPlanetDtoWithLord());
         mvc.perform(
-                put(urlTemplate + "/" + lordId + "/assign_planet")
-                        .param("planet_id", String.valueOf(planetId)))
+                put(urlTemplate + "/" + LORD_ID + "/assign_planet")
+                        .param("planet_id", String.valueOf(PLANET_ID)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(planetId.intValue())))
-                .andExpect(jsonPath("$.name", is(someNamePlanet)))
-                .andExpect(jsonPath("$.lord.id", is(lordId.intValue())))
-                .andExpect(jsonPath("$.lord.name", is(someNameLord)))
-                .andExpect(jsonPath("$.lord.age", is(lordAge)));
+                .andExpect(jsonPath("$.id", is(PLANET_ID.intValue())))
+                .andExpect(jsonPath("$.name", is(SOME_NAME_PLANET)))
+                .andExpect(jsonPath("$.lord.id", is(LORD_ID.intValue())))
+                .andExpect(jsonPath("$.lord.name", is(SOME_NAME_LORD)))
+                .andExpect(jsonPath("$.lord.age", is(LORD_AGE)));
     }
 
     @Test
     void assignPlanetToLord_ReturnStatusBadRequest_AndReturnLordNotFoundException() throws Exception {
-        when(lordService.assignToManagePlanet(eq(lordId), eq(planetId)))
-                .thenThrow(new LordNotFoundException(lordId));
+        when(lordService.assignToManagePlanet(eq(LORD_ID), eq(PLANET_ID)))
+                .thenThrow(new LordNotFoundException(LORD_ID));
         mvc.perform(
-                put(urlTemplate + "/" + lordId + "/assign_planet")
-                        .param("planet_id", String.valueOf(planetId)))
-                .andExpect(status().isBadRequest())
+                put(urlTemplate + "/" + LORD_ID + "/assign_planet")
+                        .param("planet_id", String.valueOf(PLANET_ID)))
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Lord by '" + lordId + "' not found.")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Lord by '" + lordId + "' not found.")));
+                .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
+                .andExpect(jsonPath("$.title", is("Lord by '" + LORD_ID + "' not found.")));
     }
 
     @Test
     void assignPlanetToLord_ReturnStatusBadRequest_AndReturnPlanetNotFoundException() throws Exception {
-        when(lordService.assignToManagePlanet(eq(lordId), eq(planetId)))
-                .thenThrow(new PlanetNotFoundException(planetId));
+        when(lordService.assignToManagePlanet(eq(LORD_ID), eq(PLANET_ID)))
+                .thenThrow(new PlanetNotFoundException(PLANET_ID));
         mvc.perform(
-                put(urlTemplate + "/" + lordId + "/assign_planet")
-                        .param("planet_id", String.valueOf(planetId)))
-                .andExpect(status().isBadRequest())
+                put(urlTemplate + "/" + LORD_ID + "/assign_planet")
+                        .param("planet_id", String.valueOf(PLANET_ID)))
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Planet by '" + planetId + "' not found.")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Planet by '" + planetId + "' not found.")));
+                .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
+                .andExpect(jsonPath("$.title", is("Planet by '" + PLANET_ID + "' not found.")));
     }
 
     @Test
     void deleteById_ReturnStatusNoContent_AndReturnOk() throws Exception {
-        mvc.perform(delete(urlTemplate + "/" + lordId))
+        mvc.perform(delete(urlTemplate + "/" + LORD_ID))
                 .andExpect(status().isNoContent())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.NO_CONTENT.value())));
@@ -518,13 +411,11 @@ class LordControllerUnitTest {
 
     @Test
     void deleteById_ReturnStatusBadRequest_AndReturnLordNotFoundException() throws Exception {
-        doThrow(new LordNotFoundException(lordId)).when(lordService).deleteById(lordId);
-        mvc.perform(delete(urlTemplate + "/" + lordId))
-                .andExpect(status().isBadRequest())
+        doThrow(new LordNotFoundException(LORD_ID)).when(lordService).deleteById(LORD_ID);
+        mvc.perform(delete(urlTemplate + "/" + LORD_ID))
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
-                .andExpect(jsonPath("$.title", is("Lord by '" + lordId + "' not found.")))
-                .andExpect(jsonPath("$.errors", hasSize(1)))
-                .andExpect(jsonPath("$.errors[0]", is("Lord by '" + lordId + "' not found.")));
+                .andExpect(jsonPath("$.status", is(HttpStatus.NOT_FOUND.value())))
+                .andExpect(jsonPath("$.title", is("Lord by '" + LORD_ID + "' not found.")));
     }
 }

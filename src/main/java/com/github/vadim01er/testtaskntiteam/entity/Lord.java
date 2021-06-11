@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,10 +21,9 @@ import java.util.List;
  */
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
 @Entity
 @Table(name = "Lord")
+@EqualsAndHashCode
 @NoArgsConstructor
 public class Lord {
     @Id

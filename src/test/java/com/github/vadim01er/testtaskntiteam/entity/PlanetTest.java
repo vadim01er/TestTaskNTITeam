@@ -4,27 +4,27 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static com.github.vadim01er.testtaskntiteam.utils.Utils.SOME_NAME_LORD;
+import static com.github.vadim01er.testtaskntiteam.utils.Utils.SOME_NAME_PLANET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PlanetTest {
-    private final String someNameLord = "some name lord";
-    private final String someNamePlanet = "some name planet";
 
     @Test
     void update() {
         Lord lord = new Lord() {{
             setId(1L);
-            setName(someNameLord);
+            setName(SOME_NAME_LORD);
             setAge(10);
             setPlanets(Collections.emptyList());
         }};
         Planet planet = new Planet() {{
             setId(2L);
-            setName(someNamePlanet);
+            setName(SOME_NAME_PLANET);
             setLord(lord);
         }};
         lord.setPlanets(Collections.singletonList(planet));
-        PlanetDto planetDto = new PlanetDto(1L, someNameLord + " new", null);
+        PlanetDto planetDto = new PlanetDto(1L, SOME_NAME_LORD + " new", null);
 
         planet.update(planetDto);
 
@@ -37,13 +37,13 @@ class PlanetTest {
     void toDto() {
         Lord lord = new Lord() {{
             setId(2L);
-            setName(someNameLord);
+            setName(SOME_NAME_LORD);
             setAge(10);
             setPlanets(Collections.emptyList());
         }};
         Planet planet = new Planet() {{
             setId(1L);
-            setName(someNamePlanet);
+            setName(SOME_NAME_PLANET);
             setLord(lord);
         }};
         lord.setPlanets(Collections.singletonList(planet));
@@ -51,7 +51,7 @@ class PlanetTest {
         PlanetDto planetDto = planet.toDto();
 
         assertEquals(1L, planetDto.getId());
-        assertEquals(someNamePlanet, planetDto.getName());
+        assertEquals(SOME_NAME_PLANET, planetDto.getName());
         assertEquals(lord, planet.getLord());
     }
 }

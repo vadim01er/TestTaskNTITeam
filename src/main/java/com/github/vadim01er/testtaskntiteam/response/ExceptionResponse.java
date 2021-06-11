@@ -1,6 +1,6 @@
 package com.github.vadim01er.testtaskntiteam.response;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * Response class of exception.
  */
 @Getter
-@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExceptionResponse {
     private final int status;
     private final String title;
@@ -27,5 +27,11 @@ public class ExceptionResponse {
         this.status = status.value();
         this.title = title;
         this.errors = errors;
+    }
+
+    public ExceptionResponse(HttpStatus status, String title) {
+        this.status = status.value();
+        this.title = title;
+        this.errors = null;
     }
 }
