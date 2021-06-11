@@ -2,6 +2,7 @@ package com.github.vadim01er.testtaskntiteam.exception;
 
 import com.github.vadim01er.testtaskntiteam.response.ExceptionResponse;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**
@@ -48,11 +48,10 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
                 new ExceptionResponse(
                         status,
                         "Unformed json in body",
-                        ex.getCause().getLocalizedMessage()
+                        Collections.singletonList("Unformed json in body")
                 )
         );
     }
-
 
     /**
      * Handle argument not valid.
@@ -73,11 +72,12 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(status).body(
                 new ExceptionResponse(
                         status,
-                        "Invalid json",
-                        "No valid json field: "
-                                + ex.getBindingResult().getFieldErrors().stream()
+                        "No valid json field: " + ex.getBindingResult().getFieldErrors().stream()
                                 .map(FieldError::getField)
-                                .collect(Collectors.toSet())
+                                .collect(Collectors.toSet()),
+                        ex.getBindingResult().getFieldErrors().stream()
+                                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                                .collect(Collectors.toList())
                 )
         );
     }
@@ -102,37 +102,38 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(
                 new ExceptionResponse(status,
                         "Invalid type parameter",
-                        String.format(
-                                format,
-                                ex.getPropertyName(),
-                                ex.getValue(),
-                                ex.getRequiredType().getSimpleName()
+                        Collections.singletonList(
+                                String.format(
+                                        format,
+                                        ex.getPropertyName(),
+                                        ex.getValue(),
+                                        ex.getRequiredType())
                         )
                 )
         );
     }
 
-    /**
-     * Method handler {@link ConstraintViolationException}.
-     *
-     * @param ex {@link ConstraintViolationException}
-     * @return {@link ResponseEntity} with {@link ExceptionResponse}
-     */
-    @org.springframework.web.bind.annotation.ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(
-            ConstraintViolationException ex
-    ) {
-        return ResponseEntity.badRequest().body(
-                new ExceptionResponse(
-                        HttpStatus.BAD_REQUEST,
-                        ex.getMessage(),
-                        "No valid parameter: "
-                                + ex.getConstraintViolations().stream()
-                                .map(ConstraintViolation::getExecutableParameters)
-                                .collect(Collectors.toList())
-                )
-        );
-    }
+//    /**
+//     * Method handler {@link ConstraintViolationException}.
+//     *
+//     * @param ex {@link ConstraintViolationException}
+//     * @return {@link ResponseEntity} with {@link ExceptionResponse}
+//     */
+//    @org.springframework.web.bind.annotation.ExceptionHandler(ConstraintViolationException.class)
+//    public ResponseEntity<Object> handleConstraintViolationException(
+//            ConstraintViolationException ex
+//    ) {
+//        return ResponseEntity.badRequest().body(
+//                new ExceptionResponse(
+//                        HttpStatus.BAD_REQUEST,
+//                        ex.getMessage(),
+//                        ex.getConstraintViolations().stream()
+//                                .map(ConstraintViolation::getExecutableParameters)
+//                                .flatMap(objects -> Arrays.stream(objects).map(Object::))
+//                                .collect(Collectors.toList())
+//                )
+//        );
+//    }
 
     /**
      * Handle a not found endpoint handler in controller.
@@ -154,9 +155,11 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
                 new ExceptionResponse(
                         status,
                         "Endpoint not found",
-                        "Endpoint not found on this path: \""
-                                + ex.getRequestURL()
-                                + "\""
+                        Collections.singletonList(
+                                "Endpoint not found on this path: \""
+                                        + ex.getRequestURL()
+                                        + "\""
+                        )
                 )
         );
     }
@@ -176,7 +179,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
                 new ExceptionResponse(
                         HttpStatus.BAD_REQUEST,
                         ex.getMessage(),
-                        ex.getMessage()
+                        Collections.singletonList(ex.getMessage())
                 )
         );
     }

@@ -48,10 +48,15 @@ public class LordController {
      * Gets all.
      *
      * @return the {@link List} of all {@link Lord}
+     * @throws LordNotFoundException the lord not found exception
      */
     @GetMapping()
-    public ResponseEntity<Object> getAll() {
+    public ResponseEntity<Object> getAll()
+            throws LordNotFoundException {
         List<LordDto> lords = lordServiceImpl.getAll();
+        if (lords.isEmpty()) {
+            throw new LordNotFoundException();
+        }
         return ResponseEntity.ok(lords);
     }
 
@@ -59,10 +64,16 @@ public class LordController {
      * Gets loafers.
      *
      * @return the {@link List} of {@link Lord} loafers(has no planet)
+     * @throws LordNotFoundException the lord not found exception
      */
     @GetMapping("/loafers")
-    public ResponseEntity<Object> getLoafers() {
+    public ResponseEntity<Object> getLoafers()
+            throws LordNotFoundException {
         List<LordDto> lords = lordServiceImpl.getLoafers();
+        System.out.println(lords);
+        if (lords.isEmpty()) {
+            throw new LordNotFoundException();
+        }
         return ResponseEntity.ok(lords);
     }
 
@@ -85,10 +96,15 @@ public class LordController {
      * Gets top.
      *
      * @return the {@link List} of top {@link LordDto}
+     * @throws LordNotFoundException the lord not found exception
      */
     @GetMapping("/top")
-    public ResponseEntity<Object> getTop() {
+    public ResponseEntity<Object> getTop()
+            throws LordNotFoundException {
         List<LordDto> lords = lordServiceImpl.getTopTen();
+        if (lords.isEmpty()) {
+            throw new LordNotFoundException();
+        }
         return ResponseEntity.ok(lords);
     }
 
@@ -98,12 +114,15 @@ public class LordController {
      * @param lordDto the {@link LordDto}
      * @return the {@link Lord}
      */
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping()
     public ResponseEntity<Object> post(
             @Valid @RequestBody LordDto lordDto
     ) {
         LordDto put = lordServiceImpl.add(lordDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(put);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(put);
     }
 
     /**
@@ -120,7 +139,10 @@ public class LordController {
             @Valid @RequestBody PlanetDto planetDto
     ) throws LordNotFoundException {
         PlanetDto planet = lordServiceImpl.addPlanet(id, planetDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(planet);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(planet);
     }
 
     /**
@@ -133,7 +155,7 @@ public class LordController {
      * @throws PlanetNotFoundException the planet not found exception
      */
     @PutMapping("/{id}/assign_planet")
-    public ResponseEntity<Object> updateLord(
+    public ResponseEntity<Object> assignPlanetToLord(
             @Min(0) @PathVariable("id") Long lordId,
             @Min(0) @RequestParam("planet_id") Long planetId
     ) throws LordNotFoundException, PlanetNotFoundException {
@@ -170,6 +192,6 @@ public class LordController {
             @Min(0) @PathVariable Long id
     ) throws LordNotFoundException {
         lordServiceImpl.deleteById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("ok");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("{\"status\": 204}");
     }
 }
