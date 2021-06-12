@@ -26,8 +26,7 @@ public class LordServiceImpl implements LordService {
 
     @Override
     public LordDto getById(Long id) throws LordNotFoundException {
-        return lordRepository.findById(id).map(Lord::toDto)
-                .orElseThrow(() -> new LordNotFoundException(id));
+        return getLordById(id).toDto();
     }
 
     public Lord getLordById(Long id) throws LordNotFoundException {

@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,10 +20,9 @@ import javax.persistence.Table;
  */
 @Getter
 @Setter
-@ToString(exclude = "lord")
-@EqualsAndHashCode
 @Entity
 @Table(name = "planets")
+@EqualsAndHashCode(exclude = "lord")
 @NoArgsConstructor
 public class Planet {
     @Id

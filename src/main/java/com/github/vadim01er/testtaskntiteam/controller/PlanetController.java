@@ -4,6 +4,7 @@ import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.service.PlanetServiceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -45,8 +46,11 @@ public class PlanetController {
      * @return the all
      */
     @GetMapping()
-    public ResponseEntity<Object> getAll() {
+    public ResponseEntity<Object> getAll() throws PlanetNotFoundException {
         List<PlanetDto> planets = planetServiceImpl.getAll();
+        if (planets.isEmpty()) {
+            throw new PlanetNotFoundException();
+        }
         return ResponseEntity.ok(planets);
     }
 
@@ -76,7 +80,8 @@ public class PlanetController {
             @Valid @RequestBody PlanetDto planetDto
     ) {
         PlanetDto add = planetServiceImpl.add(planetDto);
-        return ResponseEntity.ok(add);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(add);
     }
 
     /**
@@ -108,6 +113,8 @@ public class PlanetController {
             @Min(0) @PathVariable Long id
     ) throws PlanetNotFoundException {
         planetServiceImpl.deleteById(id);
-        return ResponseEntity.ok("ok");
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .body("{\"status\": 204}");
     }
 }

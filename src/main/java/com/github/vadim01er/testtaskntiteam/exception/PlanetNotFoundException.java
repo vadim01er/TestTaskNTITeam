@@ -12,4 +12,11 @@ public class PlanetNotFoundException extends Exception {
     public PlanetNotFoundException(Long id) {
         super("Planet by '" + id + "' not found.");
     }
+
+    /**
+     * Instantiates a new PlanetNotFoundException.
+     */
+    public PlanetNotFoundException() {
+        super("Planet not found.");
+    }
 }
