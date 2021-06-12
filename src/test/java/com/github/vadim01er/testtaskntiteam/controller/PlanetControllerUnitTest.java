@@ -35,7 +35,7 @@ class PlanetControllerUnitTest {
 
     @Test
     void getAll_ReturnStatusOk_andReturnPlanetDtoList() throws Exception {
-        when(planetService.getAll()).thenReturn(Collections.singletonList(getPlanetDtoWithLord()));
+        when(planetService.getAll()).thenReturn(Collections.singletonList(getPlanetDtoWithLordDto()));
         mvc.perform(get(urlTemplate))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -59,7 +59,7 @@ class PlanetControllerUnitTest {
 
     @Test
     void getById_ReturnStatusOk_andReturnPlanetDto() throws Exception {
-        when(planetService.getById(PLANET_ID)).thenReturn(getPlanetDtoWithLord());
+        when(planetService.getById(PLANET_ID)).thenReturn(getPlanetDtoWithLordDto());
         mvc.perform(get(urlTemplate + "/" + PLANET_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -100,7 +100,7 @@ class PlanetControllerUnitTest {
         mvc.perform(
                 post(urlTemplate)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLord())))
+                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
@@ -179,7 +179,7 @@ class PlanetControllerUnitTest {
         mvc.perform(
                 put(urlTemplate + "/" + PLANET_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLord())))
+                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))

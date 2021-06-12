@@ -38,9 +38,6 @@ class LordControllerUnitTest {
     @MockBean
     private LordServiceImpl lordService;
 
-
-
-
     @Test
     void getAll_ReturnStatusOk_andReturnLordDtoList() throws Exception {
         when(lordService.getAll()).thenReturn(Collections.singletonList(getLordDtoWithPlanetDto()));
@@ -215,7 +212,7 @@ class LordControllerUnitTest {
     @Test
     void addPlanet_ReturnStatusCreated_AndReturnPlanetDto() throws Exception {
         PlanetDto planetDto = getPlanetDtoForPost();
-        when(lordService.addPlanet(eq(LORD_ID), eq(planetDto))).thenReturn(getPlanetDtoWithLord());
+        when(lordService.addPlanet(eq(LORD_ID), eq(planetDto))).thenReturn(getPlanetDtoWithLordDto());
         mvc.perform(
                 post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -234,7 +231,7 @@ class LordControllerUnitTest {
         mvc.perform(
                 post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLord())))
+                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
@@ -258,7 +255,7 @@ class LordControllerUnitTest {
 
     @Test
     void addPlanet_ReturnStatusBadRequest_AndReturnUnformedJsonException() throws Exception {
-        when(lordService.addPlanet(eq(LORD_ID), any())).thenReturn(getPlanetDtoWithLord());
+        when(lordService.addPlanet(eq(LORD_ID), any())).thenReturn(getPlanetDtoWithLordDto());
         mvc.perform(
                 post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -362,7 +359,7 @@ class LordControllerUnitTest {
     @Test
     void assignPlanetToLord_ReturnStatusOk_AndReturnPlanetDto() throws Exception {
         when(lordService.assignToManagePlanet(eq(LORD_ID), eq(PLANET_ID)))
-                .thenReturn(getPlanetDtoWithLord());
+                .thenReturn(getPlanetDtoWithLordDto());
         mvc.perform(
                 put(urlTemplate + "/" + LORD_ID + "/assign_planet")
                         .param("planet_id", String.valueOf(PLANET_ID)))

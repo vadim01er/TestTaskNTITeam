@@ -22,7 +22,7 @@ import javax.persistence.Table;
 @Setter
 @Entity
 @Table(name = "planets")
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "lord")
 @NoArgsConstructor
 public class Planet {
     @Id

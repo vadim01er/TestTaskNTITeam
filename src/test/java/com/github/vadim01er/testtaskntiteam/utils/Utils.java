@@ -87,7 +87,20 @@ public class Utils {
         }};
     }
 
-    public static PlanetDto getPlanetDtoWithLord() {
+    public static Lord getLord() {
+        return new Lord() {{
+            setId(LORD_ID);
+            setName(SOME_NAME_LORD);
+            setAge(LORD_AGE);
+            setPlanets(Collections.emptyList());
+        }};
+    }
+
+    public static PlanetDto getPlanetDtoWithLordDto() {
+        return getPlanetWithLord().toDto();
+    }
+
+    public static Planet getPlanetWithLord() {
         Planet planet = new Planet() {{
             setId(PLANET_ID);
             setName(SOME_NAME_PLANET);
@@ -99,7 +112,14 @@ public class Utils {
             setPlanets(Collections.singletonList(planet));
         }};
         planet.setLord(lord);
-        return planet.toDto();
+        return planet;
+    }
+
+    public static Planet getPlanet() {
+        return new Planet() {{
+            setId(PLANET_ID);
+            setName(SOME_NAME_PLANET);
+        }};
     }
 
 

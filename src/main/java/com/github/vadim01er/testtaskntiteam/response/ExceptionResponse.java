@@ -1,6 +1,7 @@
 package com.github.vadim01er.testtaskntiteam.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -11,6 +12,7 @@ import java.util.List;
  */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema
 public class ExceptionResponse {
     private final int status;
     private final String title;
