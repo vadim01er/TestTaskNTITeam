@@ -6,7 +6,12 @@ import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
+import com.github.vadim01er.testtaskntiteam.response.ExceptionResponse;
 import com.github.vadim01er.testtaskntiteam.service.LordServiceImpl;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,8 +53,13 @@ public class LordController {
      * Gets all.
      *
      * @return the {@link List} of all {@link Lord}
-     * @throws LordNotFoundException the lord not found exception
      */
+    @ApiResponse(responseCode = "200", description = "Get all Lords",
+            content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = LordDto.class)))})
+    @ApiResponse(responseCode = "404", description = "Invalid Lord supplied",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @GetMapping()
     public ResponseEntity<Object> getAll()
             throws LordNotFoundException {
@@ -66,6 +76,12 @@ public class LordController {
      * @return the {@link List} of {@link Lord} loafers(has no planet)
      * @throws LordNotFoundException the lord not found exception
      */
+    @ApiResponse(responseCode = "200", description = "Get loafer Lords",
+            content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = LordDto.class)))})
+    @ApiResponse(responseCode = "404", description = "Not found lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @GetMapping("/loafers")
     public ResponseEntity<Object> getLoafers()
             throws LordNotFoundException {
@@ -84,6 +100,12 @@ public class LordController {
      * @return the {@link LordDto}
      * @throws LordNotFoundException the lord not found exception
      */
+    @ApiResponse(responseCode = "200", description = "Get by id Lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = LordDto.class))})
+    @ApiResponse(responseCode = "404", description = "Not found lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(
             @Min(0) @PathVariable Long id
@@ -98,6 +120,12 @@ public class LordController {
      * @return the {@link List} of top {@link LordDto}
      * @throws LordNotFoundException the lord not found exception
      */
+    @ApiResponse(responseCode = "200", description = "Get top 10 Lords",
+            content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = LordDto.class)))})
+    @ApiResponse(responseCode = "404", description = "Not found lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @GetMapping("/top")
     public ResponseEntity<Object> getTop()
             throws LordNotFoundException {
@@ -114,6 +142,12 @@ public class LordController {
      * @param lordDto the {@link LordDto}
      * @return the {@link Lord}
      */
+    @ApiResponse(responseCode = "201", description = "Create new Lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = LordDto.class))})
+    @ApiResponse(responseCode = "400", description = "Invalid Lord supplied",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @PostMapping()
     public ResponseEntity<Object> post(
             @Valid @RequestBody LordDto lordDto
@@ -132,6 +166,15 @@ public class LordController {
      * @return the {@link Planet}
      * @throws LordNotFoundException the lord not found exception
      */
+    @ApiResponse(responseCode = "201", description = "Create new Planet assigned to Lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = LordDto.class))})
+    @ApiResponse(responseCode = "400", description = "Invalid Planet supplied",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
+    @ApiResponse(responseCode = "404", description = "Not found lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> addPlanet(
             @Min(0) @PathVariable("id") Long id,
@@ -152,6 +195,12 @@ public class LordController {
      * @throws LordNotFoundException   the lord not found exception
      * @throws PlanetNotFoundException the planet not found exception
      */
+    @ApiResponse(responseCode = "200", description = "Assign Planet to the Lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = LordDto.class))})
+    @ApiResponse(responseCode = "404", description = "Not found Lord or Planet",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @PutMapping("/{id}/assign_planet")
     public ResponseEntity<Object> assignPlanetToLord(
             @Min(0) @PathVariable("id") Long lordId,
@@ -169,6 +218,15 @@ public class LordController {
      * @return the {@link Lord}
      * @throws LordNotFoundException the lord not found exception
      */
+    @ApiResponse(responseCode = "200", description = "Update Lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = LordDto.class))})
+    @ApiResponse(responseCode = "400", description = "Invalid Lord supplied",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
+    @ApiResponse(responseCode = "404", description = "Not found lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> update(
             @Min(0) @PathVariable("id") Long id,
@@ -185,6 +243,10 @@ public class LordController {
      * @return the status "ok" if all is success
      * @throws LordNotFoundException the lord not found exception
      */
+    @ApiResponse(responseCode = "204", description = "Delete Lord by id")
+    @ApiResponse(responseCode = "404", description = "Not found lord",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(
             @Min(0) @PathVariable Long id

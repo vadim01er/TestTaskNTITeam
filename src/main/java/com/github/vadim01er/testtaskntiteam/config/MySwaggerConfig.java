@@ -20,11 +20,6 @@ public class MySwaggerConfig {
     @Bean
     public OpenAPI customOpenApi() {
         return new OpenAPI()
-//                .components(new Components()
-//                        .addSecuritySchemes(
-//                                "basicScheme",
-//                                new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")
-//                        ))
                 .info(new Info()
                         .title("Lord and Planet API (NTI Team)")
                         .version("v1")

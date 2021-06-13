@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema
+@Schema(name = "ExceptionResponse")
 public class ExceptionResponse {
     private final int status;
     private final String title;

@@ -3,7 +3,12 @@ package com.github.vadim01er.testtaskntiteam.controller;
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
+import com.github.vadim01er.testtaskntiteam.response.ExceptionResponse;
 import com.github.vadim01er.testtaskntiteam.service.PlanetServiceImpl;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +50,12 @@ public class PlanetController {
      *
      * @return the all
      */
+    @ApiResponse(responseCode = "200", description = "Get all Planets",
+            content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = PlanetDto.class)))})
+    @ApiResponse(responseCode = "404", description = "Invalid Planet supplied",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @GetMapping()
     public ResponseEntity<Object> getAll() throws PlanetNotFoundException {
         List<PlanetDto> planets = planetServiceImpl.getAll();
@@ -61,6 +72,12 @@ public class PlanetController {
      * @return the by id
      * @throws PlanetNotFoundException the planet not found exception
      */
+    @ApiResponse(responseCode = "200", description = "Get Planet by Id",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = PlanetDto.class))})
+    @ApiResponse(responseCode = "404", description = "Invalid Planet supplied",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(
             @Min(0) @PathVariable Long id
@@ -75,6 +92,12 @@ public class PlanetController {
      * @param planetDto the planet dto
      * @return the response entity
      */
+    @ApiResponse(responseCode = "201", description = "Create new Planet",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = PlanetDto.class))})
+    @ApiResponse(responseCode = "400", description = "Invalid Planet supplied",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @PostMapping()
     public ResponseEntity<Object> add(
             @Valid @RequestBody PlanetDto planetDto
@@ -92,6 +115,15 @@ public class PlanetController {
      * @return the response entity
      * @throws PlanetNotFoundException the planet not found exception
      */
+    @ApiResponse(responseCode = "201", description = "Update Planet",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = PlanetDto.class))})
+    @ApiResponse(responseCode = "400", description = "Invalid Planet supplied",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
+    @ApiResponse(responseCode = "404", description = "Not found Planet",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(
             @Min(0) @PathVariable("id") Long planetId,
@@ -108,6 +140,11 @@ public class PlanetController {
      * @return the response entity
      * @throws PlanetNotFoundException the planet not found exception
      */
+    @ApiResponse(responseCode = "204", description = "Delete Planet by id",
+            content = @Content(schema = @Schema(allowableValues = "{\"status\": 204}")))
+    @ApiResponse(responseCode = "404", description = "Not found planet",
+            content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ExceptionResponse.class))})
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(
             @Min(0) @PathVariable Long id
