@@ -8,6 +8,7 @@ import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.response.ExceptionResponse;
 import com.github.vadim01er.testtaskntiteam.service.LordServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -54,6 +55,7 @@ public class LordController {
      *
      * @return the {@link List} of all {@link Lord}
      */
+    @Operation(summary = "Get all Lords")
     @ApiResponse(responseCode = "200", description = "Get all Lords",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = LordDto.class)))})
@@ -76,6 +78,7 @@ public class LordController {
      * @return the {@link List} of {@link Lord} loafers(has no planet)
      * @throws LordNotFoundException the lord not found exception
      */
+    @Operation(summary = "Get loafer Lords")
     @ApiResponse(responseCode = "200", description = "Get loafer Lords",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = LordDto.class)))})
@@ -86,7 +89,6 @@ public class LordController {
     public ResponseEntity<Object> getLoafers()
             throws LordNotFoundException {
         List<LordDto> lords = lordServiceImpl.getLoafers();
-        System.out.println(lords);
         if (lords.isEmpty()) {
             throw new LordNotFoundException();
         }
@@ -100,6 +102,7 @@ public class LordController {
      * @return the {@link LordDto}
      * @throws LordNotFoundException the lord not found exception
      */
+    @Operation(summary = "Get Lord by id")
     @ApiResponse(responseCode = "200", description = "Get by id Lord",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = LordDto.class))})
@@ -120,6 +123,7 @@ public class LordController {
      * @return the {@link List} of top {@link LordDto}
      * @throws LordNotFoundException the lord not found exception
      */
+    @Operation(summary = "Get top 10 Lords by age")
     @ApiResponse(responseCode = "200", description = "Get top 10 Lords",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = LordDto.class)))})
@@ -142,6 +146,7 @@ public class LordController {
      * @param lordDto the {@link LordDto}
      * @return the {@link Lord}
      */
+    @Operation(summary = "Create new Lord")
     @ApiResponse(responseCode = "201", description = "Create new Lord",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = LordDto.class))})
@@ -166,6 +171,7 @@ public class LordController {
      * @return the {@link Planet}
      * @throws LordNotFoundException the lord not found exception
      */
+    @Operation(summary = "Create new Planet assigned to Lord")
     @ApiResponse(responseCode = "201", description = "Create new Planet assigned to Lord",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = LordDto.class))})
@@ -195,6 +201,7 @@ public class LordController {
      * @throws LordNotFoundException   the lord not found exception
      * @throws PlanetNotFoundException the planet not found exception
      */
+    @Operation(summary = "Assign Planet to the Lord")
     @ApiResponse(responseCode = "200", description = "Assign Planet to the Lord",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = LordDto.class))})
@@ -218,6 +225,7 @@ public class LordController {
      * @return the {@link Lord}
      * @throws LordNotFoundException the lord not found exception
      */
+    @Operation(summary = "Update Lord")
     @ApiResponse(responseCode = "200", description = "Update Lord",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = LordDto.class))})
@@ -243,6 +251,7 @@ public class LordController {
      * @return the status "ok" if all is success
      * @throws LordNotFoundException the lord not found exception
      */
+    @Operation(summary = "Delete Lord by id")
     @ApiResponse(responseCode = "204", description = "Delete Lord by id")
     @ApiResponse(responseCode = "404", description = "Not found lord",
             content = {@Content(mediaType = "application/json",
