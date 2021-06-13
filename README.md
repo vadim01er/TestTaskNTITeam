@@ -1,4 +1,4 @@
-# Тестовое задание NTI TEA
+# Тестовое задание NTI TEAM
 
 ### Описание:
 3141 год.
@@ -50,3 +50,5 @@
 *   Swagger UI
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/14540131-618f7723-6782-4dbc-9a20-9a977e926e7d?action=collection%2Ffork&collection-url=entityId%3D14540131-618f7723-6782-4dbc-9a20-9a977e926e7d%26entityType%3Dcollection%26workspaceId%3Dffc67eab-7569-4483-abff-a4406e408be4)
+
+To watch documentation use swagger UI: http://localhost:8080/swagger-ui/index.html and enter to explorer "\api-docs"
