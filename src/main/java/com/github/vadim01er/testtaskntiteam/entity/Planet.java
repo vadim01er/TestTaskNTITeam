@@ -40,6 +40,7 @@ public class Planet {
      * Instantiates a new {@link Planet}.
      *
      * @param planetDto the {@link PlanetDto}
+     * @param lord      the lord
      */
     public Planet(PlanetDto planetDto, Lord lord) {
         this.name = planetDto.getName();

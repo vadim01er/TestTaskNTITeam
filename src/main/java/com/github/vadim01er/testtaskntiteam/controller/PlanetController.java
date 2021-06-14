@@ -5,6 +5,7 @@ import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.response.ExceptionResponse;
 import com.github.vadim01er.testtaskntiteam.service.PlanetServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -49,7 +50,9 @@ public class PlanetController {
      * Gets all.
      *
      * @return the all
+     * @throws PlanetNotFoundException the planet not found exception
      */
+    @Operation(summary = "Get all Planets")
     @ApiResponse(responseCode = "200", description = "Get all Planets",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = PlanetDto.class)))})
@@ -72,6 +75,7 @@ public class PlanetController {
      * @return the by id
      * @throws PlanetNotFoundException the planet not found exception
      */
+    @Operation(summary = "Get Planet by Id")
     @ApiResponse(responseCode = "200", description = "Get Planet by Id",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = PlanetDto.class))})
@@ -92,6 +96,7 @@ public class PlanetController {
      * @param planetDto the planet dto
      * @return the response entity
      */
+    @Operation(summary = "Create new Planet")
     @ApiResponse(responseCode = "201", description = "Create new Planet",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = PlanetDto.class))})
@@ -115,6 +120,7 @@ public class PlanetController {
      * @return the response entity
      * @throws PlanetNotFoundException the planet not found exception
      */
+    @Operation(summary = "Update Planet")
     @ApiResponse(responseCode = "201", description = "Update Planet",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = PlanetDto.class))})
@@ -140,6 +146,7 @@ public class PlanetController {
      * @return the response entity
      * @throws PlanetNotFoundException the planet not found exception
      */
+    @Operation(summary = "Delete Planet by id")
     @ApiResponse(responseCode = "204", description = "Delete Planet by id",
             content = @Content(schema = @Schema(allowableValues = "{\"status\": 204}")))
     @ApiResponse(responseCode = "404", description = "Not found planet",
