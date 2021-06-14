@@ -50,6 +50,7 @@ public class PlanetController {
      * Gets all.
      *
      * @return the all
+     * @throws PlanetNotFoundException the planet not found exception
      */
     @Operation(summary = "Get all Planets")
     @ApiResponse(responseCode = "200", description = "Get all Planets",

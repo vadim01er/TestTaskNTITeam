@@ -54,6 +54,7 @@ public class LordController {
      * Gets all.
      *
      * @return the {@link List} of all {@link Lord}
+     * @throws LordNotFoundException the lord not found exception
      */
     @Operation(summary = "Get all Lords")
     @ApiResponse(responseCode = "200", description = "Get all Lords",
