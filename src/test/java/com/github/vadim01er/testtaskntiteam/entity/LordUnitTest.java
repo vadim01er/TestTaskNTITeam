@@ -1,5 +1,6 @@
 package com.github.vadim01er.testtaskntiteam.entity;
 
+import com.github.vadim01er.testtaskntiteam.dto.LordDto;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -33,26 +34,4 @@ class LordUnitTest {
         assertEquals(Collections.singletonList(planet), lord.getPlanets());
     }
 
-    @Test
-    void toDto() {
-        Lord lord = new Lord() {{
-            setId(1L);
-            setName(SOME_NAME_LORD);
-            setAge(10);
-            setPlanets(Collections.singletonList(new Planet() {{
-                setId(2L);
-                setName(SOME_NAME_PLANET);
-                setLord(null);
-            }}));
-        }};
-
-        LordDto lordDto = lord.toDto();
-
-        assertEquals(1L, lordDto.getId());
-        assertEquals(SOME_NAME_LORD, lordDto.getName());
-        assertEquals(10, lordDto.getAge());
-        assertEquals(2L, lordDto.getPlanets().get(0).getId());
-        assertEquals(SOME_NAME_PLANET, lordDto.getPlanets().get(0).getName());
-        assertEquals(lordDto, lordDto.getPlanets().get(0).getLord());
-    }
 }

@@ -1,16 +1,15 @@
-package com.github.vadim01er.testtaskntiteam.entity;
+package com.github.vadim01er.testtaskntiteam.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.github.vadim01er.testtaskntiteam.entity.Lord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.Collections;
@@ -24,15 +23,7 @@ import java.util.Objects;
 @Validated
 @NoArgsConstructor
 @AllArgsConstructor
-public class LordDto {
-    @Schema(hidden = true)
-    @Null
-    private Long id;
-
-    @Schema(maxLength = 250, minLength = 1)
-    @NotBlank
-    @Length(min = 1, max = 250)
-    private String name;
+public class LordDto extends AbstractDto {
 
     @NotNull
     @Min(1)
@@ -51,15 +42,13 @@ public class LordDto {
      * @param age  the age
      */
     public LordDto(String name, Integer age) {
-        this.id = null;
-        this.name = name;
+        super(null, name);
         this.age = age;
         this.planets = null;
     }
 
-    LordDto(Long id, String name, Integer age) {
-        this.id = id;
-        this.name = name;
+    public LordDto(Long id, String name, Integer age) {
+        super(id, name);
         this.age = age;
         this.planets = Collections.emptyList();
     }
@@ -68,15 +57,15 @@ public class LordDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LordDto lordDto = (LordDto) o;
-        return Objects.equals(id, lordDto.id)
-                && Objects.equals(name, lordDto.name)
-                && Objects.equals(age, lordDto.age)
-                && Objects.equals(planets, lordDto.planets);
+        if (!super.equals(o)) return false;
+        LordDto lord = (LordDto) o;
+        return Objects.equals(age, lord.age)
+                && Objects.equals(planets, lord.planets);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age, planets);
+        return Objects.hash(super.hashCode(), age, planets);
     }
+
 }

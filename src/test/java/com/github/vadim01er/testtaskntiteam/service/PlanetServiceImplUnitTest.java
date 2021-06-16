@@ -1,7 +1,7 @@
 package com.github.vadim01er.testtaskntiteam.service;
 
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.repository.PlanetRepository;
 import com.github.vadim01er.testtaskntiteam.utils.Utils;
@@ -27,31 +27,33 @@ class PlanetServiceImplUnitTest {
 
     @Autowired
     private PlanetServiceImpl planetService;
+    @Autowired
+    private Utils utils;
     @MockBean
     private PlanetRepository planetRepository;
 
     @Test
     void getAll_Success() {
         when(planetRepository.findAll())
-                .thenReturn(Collections.singletonList(Utils.getPlanet()));
+                .thenReturn(Collections.singletonList(utils.getPlanet()));
         List<PlanetDto> planetDtoList = planetService.getAll();
-        assertEquals(Collections.singletonList(Utils.getPlanetDto()), planetDtoList);
+        assertEquals(Collections.singletonList(utils.getPlanetDto()), planetDtoList);
         when(planetRepository.findAll())
-                .thenReturn(Collections.singletonList(Utils.getPlanetWithLord()));
+                .thenReturn(Collections.singletonList(utils.getPlanetWithLord()));
         planetDtoList = planetService.getAll();
-        assertEquals(Collections.singletonList(Utils.getPlanetDtoWithLordDto()), planetDtoList);
+        assertEquals(Collections.singletonList(utils.getPlanetDtoWithLordDto()), planetDtoList);
     }
 
     @Test
     void getById_Success() throws PlanetNotFoundException {
         when(planetRepository.findById(PLANET_ID))
-                .thenReturn(Optional.of(Utils.getPlanet()));
+                .thenReturn(Optional.of(utils.getPlanet()));
         PlanetDto planetDto = planetService.getById(PLANET_ID);
-        assertEquals(Utils.getPlanetDto(), planetDto);
+        assertEquals(utils.getPlanetDto(), planetDto);
         when(planetRepository.findById(PLANET_ID))
-                .thenReturn(Optional.of(Utils.getPlanetWithLord()));
+                .thenReturn(Optional.of(utils.getPlanetWithLord()));
         planetDto = planetService.getById(PLANET_ID);
-        assertEquals(Utils.getPlanetDtoWithLordDto(), planetDto);
+        assertEquals(utils.getPlanetDtoWithLordDto(), planetDto);
     }
 
     @Test
@@ -64,13 +66,13 @@ class PlanetServiceImplUnitTest {
     @Test
     void getPlanetById_Success() throws PlanetNotFoundException {
         when(planetRepository.findById(PLANET_ID))
-                .thenReturn(Optional.of(Utils.getPlanet()));
+                .thenReturn(Optional.of(utils.getPlanet()));
         Planet planet = planetService.getPlanetById(PLANET_ID);
-        assertEquals(Utils.getPlanet(), planet);
+        assertEquals(utils.getPlanet(), planet);
         when(planetRepository.findById(PLANET_ID))
-                .thenReturn(Optional.of(Utils.getPlanetWithLord()));
+                .thenReturn(Optional.of(utils.getPlanetWithLord()));
         planet = planetService.getPlanetById(PLANET_ID);
-        assertEquals(Utils.getPlanetWithLord(), planet);
+        assertEquals(utils.getPlanetWithLord(), planet);
     }
 
     @Test
@@ -83,39 +85,39 @@ class PlanetServiceImplUnitTest {
     @Test
     void save_Success() {
         when(planetRepository.save(any(Planet.class)))
-                .thenReturn(Utils.getPlanet());
-        Planet planet = planetService.save(Utils.getPlanet());
-        assertEquals(Utils.getPlanet(), planet);
+                .thenReturn(utils.getPlanet());
+        Planet planet = planetService.save(utils.getPlanet());
+        assertEquals(utils.getPlanet(), planet);
     }
 
     @Test
     void add_DefaultMethod_Success() {
         when(planetRepository.save(any(Planet.class)))
-                .thenReturn(Utils.getPlanetWithLord());
-        PlanetDto planetDto = planetService.add(Utils.getPlanetDto(), Utils.getLord());
-        assertEquals(Utils.getPlanetDtoWithLordDto(), planetDto);
+                .thenReturn(utils.getPlanetWithLord());
+        PlanetDto planetDto = planetService.add(utils.getPlanetDto(), utils.getLord());
+        assertEquals(utils.getPlanetDtoWithLordDto(), planetDto);
     }
 
     @Test
     void add_Success() {
         when(planetRepository.save(any(Planet.class)))
-                .thenReturn(Utils.getPlanet());
-        PlanetDto planetDto = planetService.add(Utils.getPlanetDto());
-        assertEquals(Utils.getPlanetDto(), planetDto);
+                .thenReturn(utils.getPlanet());
+        PlanetDto planetDto = planetService.add(utils.getPlanetDto());
+        assertEquals(utils.getPlanetDto(), planetDto);
         when(planetRepository.save(any(Planet.class)))
-                .thenReturn(Utils.getPlanetWithLord());
-        planetDto = planetService.add(Utils.getPlanetDtoWithLordDto());
-        assertEquals(Utils.getPlanetDtoWithLordDto(), planetDto);
+                .thenReturn(utils.getPlanetWithLord());
+        planetDto = planetService.add(utils.getPlanetDtoWithLordDto());
+        assertEquals(utils.getPlanetDtoWithLordDto(), planetDto);
     }
 
     @Test
     void update_Success() throws PlanetNotFoundException {
         when(planetRepository.findById(PLANET_ID))
-                .thenReturn(Optional.of(Utils.getPlanet()));
-        when(planetRepository.save(Utils.getPlanet()))
-                .thenReturn(Utils.getPlanet());
-        PlanetDto planetDto = planetService.update(PLANET_ID, Utils.getPlanetDto());
-        assertEquals(Utils.getPlanetDto(), planetDto);
+                .thenReturn(Optional.of(utils.getPlanet()));
+        when(planetRepository.save(utils.getPlanet()))
+                .thenReturn(utils.getPlanet());
+        PlanetDto planetDto = planetService.update(PLANET_ID, utils.getPlanetDto());
+        assertEquals(utils.getPlanetDto(), planetDto);
     }
 
     @Test
@@ -123,7 +125,7 @@ class PlanetServiceImplUnitTest {
         when(planetRepository.findById(PLANET_ID))
                 .thenReturn(Optional.empty());
         assertThrows(PlanetNotFoundException.class,
-                () -> planetService.update(PLANET_ID, Utils.getPlanetDto()));
+                () -> planetService.update(PLANET_ID, utils.getPlanetDto()));
     }
 
     @Test

@@ -1,8 +1,9 @@
 package com.github.vadim01er.testtaskntiteam.service;
 
+import com.github.vadim01er.testtaskntiteam.dto.LordDto;
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.entity.Lord;
-import com.github.vadim01er.testtaskntiteam.entity.LordDto;
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
+import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.repository.LordRepository;
@@ -31,6 +32,8 @@ class LordServiceImplUnitTest {
 
     @Autowired
     private LordServiceImpl lordService;
+    @Autowired
+    private Utils utils;
 
     @MockBean
     private LordRepository lordRepository;
@@ -40,13 +43,13 @@ class LordServiceImplUnitTest {
     @Test
     void getById_Success() throws LordNotFoundException {
         when(lordRepository.findById(LORD_ID))
-                .thenReturn(Optional.of(Utils.getLord()));
+                .thenReturn(Optional.of(utils.getLord()));
         LordDto lordDto = lordService.getById(LORD_ID);
-        assertEquals(Utils.getLordDto(), lordDto);
+        assertEquals(utils.getLordDto(), lordDto);
         when(lordRepository.findById(LORD_ID))
-                .thenReturn(Optional.of(Utils.getLordWithPlanet()));
+                .thenReturn(Optional.of(utils.getLordWithPlanet()));
         lordDto = lordService.getById(LORD_ID);
-        assertEquals(Utils.getLordDtoWithPlanetDto(), lordDto);
+        assertEquals(utils.getLordDtoWithPlanetDto(), lordDto);
     }
 
     @Test
@@ -59,13 +62,13 @@ class LordServiceImplUnitTest {
     @Test
     void getLordById_Success() throws LordNotFoundException {
         when(lordRepository.findById(LORD_ID))
-                .thenReturn(Optional.of(Utils.getLord()));
+                .thenReturn(Optional.of(utils.getLord()));
         Lord lord = lordService.getLordById(LORD_ID);
-        assertEquals(Utils.getLord(), lord);
+        assertEquals(utils.getLord(), lord);
         when(lordRepository.findById(LORD_ID))
-                .thenReturn(Optional.of(Utils.getLordWithPlanet()));
+                .thenReturn(Optional.of(utils.getLordWithPlanet()));
         lord = lordService.getLordById(LORD_ID);
-        assertEquals(Utils.getLordWithPlanet(), lord);
+        assertEquals(utils.getLordWithPlanet(), lord);
     }
 
     @Test
@@ -78,51 +81,53 @@ class LordServiceImplUnitTest {
     @Test
     void getTopTen_Success() {
         when(lordRepository.findTop10ByOrderByAge())
-                .thenReturn(Collections.singletonList(Utils.getLord()));
+                .thenReturn(Collections.singletonList(utils.getLord()));
         List<LordDto> topTen = lordService.getTopTen();
-        assertEquals(Collections.singletonList(Utils.getLordDto()), topTen);
+        assertEquals(Collections.singletonList(utils.getLordDto()), topTen);
         when(lordRepository.findTop10ByOrderByAge())
-                .thenReturn(Collections.singletonList(Utils.getLordWithPlanet()));
+                .thenReturn(Collections.singletonList(utils.getLordWithPlanet()));
         topTen = lordService.getTopTen();
-        assertEquals(Collections.singletonList(Utils.getLordDtoWithPlanetDto()), topTen);
+        assertEquals(Collections.singletonList(utils.getLordDtoWithPlanetDto()), topTen);
     }
 
     @Test
     void getLoafers_Success() {
         when(lordRepository.findAllLoafers())
-                .thenReturn(Collections.singletonList(Utils.getLord()));
+                .thenReturn(Collections.singletonList(utils.getLord()));
         List<LordDto> loafers = lordService.getLoafers();
-        assertEquals(Collections.singletonList(Utils.getLordDto()), loafers);
+        assertEquals(Collections.singletonList(utils.getLordDto()), loafers);
     }
 
     @Test
     void getAll_Success() {
         when(lordRepository.findAll())
-                .thenReturn(Collections.singletonList(Utils.getLord()));
+                .thenReturn(Collections.singletonList(utils.getLord()));
         List<LordDto> lordDtoList = lordService.getAll();
-        assertEquals(Collections.singletonList(Utils.getLordDto()), lordDtoList);
+        assertEquals(Collections.singletonList(utils.getLordDto()), lordDtoList);
         when(lordRepository.findAll())
-                .thenReturn(Collections.singletonList(Utils.getLordWithPlanet()));
+                .thenReturn(Collections.singletonList(
+                        utils.getLordWithPlanet()));
         lordDtoList = lordService.getAll();
-        assertEquals(Collections.singletonList(Utils.getLordDtoWithPlanetDto()), lordDtoList);
+        assertEquals(Collections.singletonList(utils.getLordDtoWithPlanetDto()), lordDtoList);
     }
 
     @Test
     void add_Success() {
         when(lordRepository.save(any(Lord.class)))
-                .thenReturn(Utils.getLord());
-        LordDto lordDto = lordService.add(Utils.getLordDto());
-        assertEquals(Utils.getLordDto(), lordDto);
+                .thenReturn(utils.getLord());
+        LordDto lordDto = lordService.add(utils.getLordDto());
+        assertEquals(utils.getLordDto(), lordDto);
     }
 
     @Test
     void addPlanet_Success() throws LordNotFoundException {
         when(lordRepository.findById(LORD_ID))
-                .thenReturn(Optional.of(Utils.getLord()));
-        when(planetService.add(any(PlanetDto.class), eq(Utils.getLord())))
-                .thenReturn(Utils.getPlanetDtoWithLordDto());
-        PlanetDto planetDto = lordService.addPlanet(LORD_ID, Utils.getPlanetDto());
-        assertEquals(Utils.getPlanetDtoWithLordDto(), planetDto);
+                .thenReturn(Optional.of(utils.getLord()));
+        when(planetService.add(any(PlanetDto.class), eq(
+                utils.getLord())))
+                .thenReturn(utils.getPlanetDtoWithLordDto());
+        PlanetDto planetDto = lordService.addPlanet(LORD_ID, utils.getPlanetDto());
+        assertEquals(utils.getPlanetDtoWithLordDto(), planetDto);
     }
 
     @Test
@@ -130,19 +135,19 @@ class LordServiceImplUnitTest {
         when(lordRepository.findById(LORD_ID))
                 .thenReturn(Optional.empty());
         assertThrows(LordNotFoundException.class,
-                () -> lordService.addPlanet(LORD_ID, Utils.getPlanetDto()));
+                () -> lordService.addPlanet(LORD_ID, utils.getPlanetDto()));
     }
 
     @Test
     void assignToManagePlanet_Success() throws PlanetNotFoundException, LordNotFoundException {
         when(lordRepository.findById(LORD_ID))
-                .thenReturn(Optional.of(Utils.getLord()));
+                .thenReturn(Optional.of(utils.getLord()));
         when(planetService.getPlanetById(PLANET_ID))
-                .thenReturn(Utils.getPlanet());
-        when(planetService.save(eq(Utils.getPlanet())))
-                .thenReturn(Utils.getPlanetWithLord());
+                .thenReturn(utils.getPlanet());
+        when(planetService.save(any(Planet.class)))
+                .thenReturn(utils.getPlanetWithLord());
         PlanetDto planetDto = lordService.assignToManagePlanet(LORD_ID, PLANET_ID);
-        assertEquals(Utils.getPlanetDtoWithLordDto(), planetDto);
+        assertEquals(utils.getPlanetDtoWithLordDto(), planetDto);
     }
 
     @Test
@@ -156,7 +161,8 @@ class LordServiceImplUnitTest {
     @Test
     void assignToManagePlanet_Exception_PlanetNotFound() throws PlanetNotFoundException {
         when(lordRepository.findById(LORD_ID))
-                .thenReturn(Optional.of(Utils.getLord()));
+                .thenReturn(Optional.of(
+                        utils.getLord()));
         when(planetService.getPlanetById(PLANET_ID))
                 .thenThrow(new PlanetNotFoundException(PLANET_ID));
         assertThrows(PlanetNotFoundException.class,
@@ -166,11 +172,16 @@ class LordServiceImplUnitTest {
     @Test
     void update_Success() throws LordNotFoundException {
         when(lordRepository.findById(LORD_ID))
-                .thenReturn(Optional.of(Utils.getLord()));
-        when(lordRepository.save(Utils.getLord()))
-                .thenReturn(Utils.getLord());
-        LordDto lordDto = lordService.update(LORD_ID, Utils.getLordDto());
-        assertEquals(Utils.getLordDto(), lordDto);
+                .thenReturn(Optional.of(
+                        utils.getLord()));
+        when(lordRepository.save(
+                utils.getLord()))
+                .thenReturn(
+                        utils.getLord());
+        LordDto lordDto = lordService.update(LORD_ID,
+                utils.getLordDto());
+        assertEquals(
+                utils.getLordDto(), lordDto);
     }
 
     @Test
@@ -178,7 +189,8 @@ class LordServiceImplUnitTest {
         when(lordRepository.findById(LORD_ID))
                 .thenReturn(Optional.empty());
         assertThrows(LordNotFoundException.class,
-                () -> lordService.update(LORD_ID, Utils.getLordDto()));
+                () -> lordService.update(LORD_ID,
+                        utils.getLordDto()));
     }
 
     @Test

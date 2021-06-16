@@ -2,12 +2,16 @@ package com.github.vadim01er.testtaskntiteam.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.vadim01er.testtaskntiteam.dto.LordDto;
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.entity.Lord;
-import com.github.vadim01er.testtaskntiteam.entity.LordDto;
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
+import com.github.vadim01er.testtaskntiteam.mapper.LordMapper;
+import com.github.vadim01er.testtaskntiteam.mapper.PlanetMapper;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.AnyOf;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
@@ -17,7 +21,12 @@ import static org.hamcrest.Matchers.is;
 /**
  * Utils class. Use for help all test get persistent methods and fields.
  */
+@Component
 public class Utils {
+    @Autowired
+    private PlanetMapper planetMapper;
+    @Autowired
+    private LordMapper lordMapper;
 
     public static final Long LORD_ID = 12L;
     public static final Long PLANET_ID = 13L;
@@ -55,7 +64,7 @@ public class Utils {
     public static final Matcher<String> LORD_NOT_FOUND =
             is("Lord not found.");
 
-    public static Lord getLordWithPlanet() {
+    public Lord getLordWithPlanet() {
         Planet planet = new Planet() {{
             setId(PLANET_ID);
             setName(SOME_NAME_PLANET);
@@ -70,15 +79,15 @@ public class Utils {
         return lord;
     }
 
-    public static LordDto getLordDtoWithPlanetDto() {
-        return getLordWithPlanet().toDto();
+    public LordDto getLordDtoWithPlanetDto() {
+        return lordMapper.toDto(getLordWithPlanet());
     }
 
-    public static LordDto getLordDto() {
-        return getLord(SOME_NAME_LORD, LORD_AGE).toDto();
+    public LordDto getLordDto() {
+        return lordMapper.toDto(getLord(SOME_NAME_LORD, LORD_AGE));
     }
 
-    public static Lord getLord(String name, Integer age) {
+    public Lord getLord(String name, Integer age) {
         return new Lord() {{
             setId(LORD_ID);
             setName(name);
@@ -87,7 +96,7 @@ public class Utils {
         }};
     }
 
-    public static Lord getLord() {
+    public Lord getLord() {
         return new Lord() {{
             setId(LORD_ID);
             setName(SOME_NAME_LORD);
@@ -96,11 +105,11 @@ public class Utils {
         }};
     }
 
-    public static PlanetDto getPlanetDtoWithLordDto() {
-        return getPlanetWithLord().toDto();
+    public PlanetDto getPlanetDtoWithLordDto() {
+        return planetMapper.toDto(getPlanetWithLord());
     }
 
-    public static Planet getPlanetWithLord() {
+    public Planet getPlanetWithLord() {
         Planet planet = new Planet() {{
             setId(PLANET_ID);
             setName(SOME_NAME_PLANET);
@@ -115,7 +124,7 @@ public class Utils {
         return planet;
     }
 
-    public static Planet getPlanet() {
+    public Planet getPlanet() {
         return new Planet() {{
             setId(PLANET_ID);
             setName(SOME_NAME_PLANET);
@@ -123,27 +132,27 @@ public class Utils {
     }
 
 
-    public static LordDto getLordDto(String newName, Integer age) {
-        return getLord(newName, age).toDto();
+    public  LordDto getLordDto(String newName, Integer age) {
+        return lordMapper.toDto(getLord(newName, age));
     }
 
-    public static LordDto getLordDtoForPost() {
+    public LordDto getLordDtoForPost() {
         return new LordDto(SOME_NAME_LORD, LORD_AGE);
     }
 
-    public static PlanetDto getPlanetDtoForPost() {
+    public PlanetDto getPlanetDtoForPost() {
         return new PlanetDto(SOME_NAME_PLANET);
     }
 
-    public static PlanetDto getPlanetDto() {
+    public PlanetDto getPlanetDto() {
         return getPlanetDto(SOME_NAME_PLANET);
     }
 
-    public static PlanetDto getPlanetDto(String name) {
+    public PlanetDto getPlanetDto(String name) {
         Planet planet = new Planet() {{
             setId(PLANET_ID);
             setName(name);
         }};
-        return planet.toDto();
+        return planetMapper.toDto(planet);
     }
 }

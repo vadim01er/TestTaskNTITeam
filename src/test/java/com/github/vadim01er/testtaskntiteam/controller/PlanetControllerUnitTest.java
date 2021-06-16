@@ -1,8 +1,9 @@
 package com.github.vadim01er.testtaskntiteam.controller;
 
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.service.PlanetServiceImpl;
+import com.github.vadim01er.testtaskntiteam.utils.Utils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,12 +31,14 @@ class PlanetControllerUnitTest {
 
     @Autowired
     private MockMvc mvc;
+    @Autowired
+    private Utils utils;
     @MockBean
     private PlanetServiceImpl planetService;
 
     @Test
     void getAll_ReturnStatusOk_andReturnPlanetDtoList() throws Exception {
-        when(planetService.getAll()).thenReturn(Collections.singletonList(getPlanetDtoWithLordDto()));
+        when(planetService.getAll()).thenReturn(Collections.singletonList(utils.getPlanetDtoWithLordDto()));
         mvc.perform(get(urlTemplate))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -59,7 +62,7 @@ class PlanetControllerUnitTest {
 
     @Test
     void getById_ReturnStatusOk_andReturnPlanetDto() throws Exception {
-        when(planetService.getById(PLANET_ID)).thenReturn(getPlanetDtoWithLordDto());
+        when(planetService.getById(PLANET_ID)).thenReturn(utils.getPlanetDtoWithLordDto());
         mvc.perform(get(urlTemplate + "/" + PLANET_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -82,8 +85,8 @@ class PlanetControllerUnitTest {
 
     @Test
     void post_ReturnStatusCreated_AndReturnPlanetDto() throws Exception {
-        PlanetDto planetDto = getPlanetDtoForPost();
-        when(planetService.add(any())).thenReturn(getPlanetDto());
+        PlanetDto planetDto = utils.getPlanetDtoForPost();
+        when(planetService.add(any())).thenReturn(utils.getPlanetDto());
         mvc.perform(
                 post(urlTemplate)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -100,7 +103,7 @@ class PlanetControllerUnitTest {
         mvc.perform(
                 post(urlTemplate)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLordDto())))
+                        .content(OBJECT_MAPPER.writeValueAsString(utils.getPlanetDtoWithLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
@@ -148,7 +151,7 @@ class PlanetControllerUnitTest {
     @Test
     void update_ReturnStatusOk_AndReturnPlanetDto() throws Exception {
         when(planetService.update(eq(PLANET_ID), any()))
-                .thenReturn(getPlanetDto("new name"));
+                .thenReturn(utils.getPlanetDto("new name"));
         mvc.perform(
                 put(urlTemplate + "/" + PLANET_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -179,7 +182,7 @@ class PlanetControllerUnitTest {
         mvc.perform(
                 put(urlTemplate + "/" + PLANET_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLordDto())))
+                        .content(OBJECT_MAPPER.writeValueAsString(utils.getPlanetDtoWithLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))

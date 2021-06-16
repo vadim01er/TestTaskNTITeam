@@ -1,14 +1,13 @@
-package com.github.vadim01er.testtaskntiteam.entity;
+package com.github.vadim01er.testtaskntiteam.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.github.vadim01er.testtaskntiteam.entity.Planet;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import java.util.Objects;
 
@@ -19,15 +18,7 @@ import java.util.Objects;
 @Validated
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlanetDto {
-    @Schema(hidden = true)
-    @Null
-    private Long id;
-
-    @Schema(minLength = 1, maxLength = 250)
-    @NotBlank
-    @Length(min = 1, max = 250)
-    private String name;
+public class PlanetDto extends AbstractDto {
 
     @Schema(hidden = true)
     @Null
@@ -35,7 +26,7 @@ public class PlanetDto {
     private LordDto lord;
 
     public PlanetDto(String name) {
-        this.name = name;
+        super(null, name);
     }
 
     @Override
@@ -46,16 +37,18 @@ public class PlanetDto {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PlanetDto planetDto = (PlanetDto) o;
-        boolean b = Objects.equals(id, planetDto.id) && Objects.equals(name, planetDto.name);
-        if (b && lord == planetDto.lord) {
-            return true;
+        if (!super.equals(o)) {
+            return false;
         }
-        return b && Objects.equals(lord.getId(), planetDto.lord.getId());
+        PlanetDto planet = (PlanetDto) o;
+        if (lord != null && planet.lord != null) {
+            return Objects.equals(lord.getId(), planet.lord.getId());
+        }
+        return lord == null && planet.lord == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, lord);
+        return Objects.hash(super.hashCode(), lord.getId());
     }
 }
