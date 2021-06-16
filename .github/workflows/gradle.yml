@@ -21,4 +21,4 @@ jobs:
         run: ./gradlew build
       - uses: codecov/codecov-action@v1
         with:
-          token: 9692ed67-7a5f-4c88-b7e7-15e7708f1bf3
+          token: c30b0aea-60ed-45df-81e1-5e0c2485aa4b
