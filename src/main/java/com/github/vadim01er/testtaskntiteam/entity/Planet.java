@@ -1,19 +1,17 @@
 package com.github.vadim01er.testtaskntiteam.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.EqualsAndHashCode;
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Objects;
 
 /**
  * The type {@link Planet}.
@@ -22,14 +20,8 @@ import javax.persistence.Table;
 @Setter
 @Entity
 @Table(name = "planets")
-@EqualsAndHashCode(exclude = "lord")
 @NoArgsConstructor
-public class Planet {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;
+public class Planet extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "lord_id")
@@ -43,7 +35,7 @@ public class Planet {
      * @param lord      the lord
      */
     public Planet(PlanetDto planetDto, Lord lord) {
-        this.name = planetDto.getName();
+        super(planetDto.getName());
         this.lord = lord;
     }
 
@@ -53,17 +45,29 @@ public class Planet {
      * @param planetDto the {@link PlanetDto}
      */
     public void update(PlanetDto planetDto) {
-        this.name = planetDto.getName();
+        super.setName(planetDto.getName());
     }
 
-    /**
-     * Convert to {@link PlanetDto}.
-     *
-     * @return the {@link PlanetDto}
-     */
-    public PlanetDto toDto() {
-        LordDto lordDto =
-                lord == null ? null : new LordDto(lord.getId(), lord.getName(), lord.getAge());
-        return new PlanetDto(this.id, this.name, lordDto);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        Planet planet = (Planet) o;
+        if (lord != null && planet.lord != null) {
+            return Objects.equals(lord.getId(), planet.lord.getId());
+        }
+        return lord == null && planet.lord == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), lord.getId());
     }
 }

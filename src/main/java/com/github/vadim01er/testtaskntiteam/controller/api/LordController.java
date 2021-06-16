@@ -1,9 +1,9 @@
-package com.github.vadim01er.testtaskntiteam.controller;
+package com.github.vadim01er.testtaskntiteam.controller.api;
 
+import com.github.vadim01er.testtaskntiteam.dto.LordDto;
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.entity.Lord;
-import com.github.vadim01er.testtaskntiteam.entity.LordDto;
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.response.ExceptionResponse;

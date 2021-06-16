@@ -1,9 +1,10 @@
 package com.github.vadim01er.testtaskntiteam.service;
 
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.entity.Lord;
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
+import com.github.vadim01er.testtaskntiteam.mapper.PlanetMapper;
 import com.github.vadim01er.testtaskntiteam.repository.PlanetRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,18 +21,19 @@ import java.util.stream.Collectors;
 public class PlanetServiceImpl implements PlanetService {
 
     private final PlanetRepository planetRepository;
+    private final PlanetMapper planetMapper;
 
     @Override
     public List<PlanetDto> getAll() {
         return planetRepository.findAll().stream()
-                .map(Planet::toDto)
+                .map(planetMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public PlanetDto getById(Long id) throws PlanetNotFoundException {
         return planetRepository.findById(id)
-                .map(Planet::toDto)
+                .map(planetMapper::toDto)
                 .orElseThrow(() -> new PlanetNotFoundException(id));
     }
 
@@ -65,8 +67,9 @@ public class PlanetServiceImpl implements PlanetService {
      * @return the {@link Planet}
      */
     PlanetDto add(PlanetDto planetDto, Lord lord) {
-        return planetRepository.save(new Planet(planetDto, lord))
-                .toDto();
+        return planetMapper.toDto(
+                planetRepository.save(new Planet(planetDto, lord))
+        );
     }
 
     @Override
@@ -79,8 +82,7 @@ public class PlanetServiceImpl implements PlanetService {
             throws PlanetNotFoundException {
         Planet planet = getPlanetById(id);
         planet.update(planetDto);
-        return planetRepository.save(planet)
-                .toDto();
+        return planetMapper.toDto(planetRepository.save(planet));
     }
 
     @Override

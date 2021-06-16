@@ -1,11 +1,13 @@
 package com.github.vadim01er.testtaskntiteam.service;
 
+import com.github.vadim01er.testtaskntiteam.dto.LordDto;
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.entity.Lord;
-import com.github.vadim01er.testtaskntiteam.entity.LordDto;
 import com.github.vadim01er.testtaskntiteam.entity.Planet;
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
+import com.github.vadim01er.testtaskntiteam.mapper.LordMapper;
+import com.github.vadim01er.testtaskntiteam.mapper.PlanetMapper;
 import com.github.vadim01er.testtaskntiteam.repository.LordRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,10 +25,12 @@ public class LordServiceImpl implements LordService {
 
     private final LordRepository lordRepository;
     private final PlanetServiceImpl planetService;
+    private final LordMapper lordMapper;
+    private final PlanetMapper planetMapper;
 
     @Override
     public LordDto getById(Long id) throws LordNotFoundException {
-        return getLordById(id).toDto();
+        return lordMapper.toDto(getLordById(id));
     }
 
     public Lord getLordById(Long id) throws LordNotFoundException {
@@ -37,28 +41,27 @@ public class LordServiceImpl implements LordService {
     @Override
     public List<LordDto> getTopTen() {
         return lordRepository.findTop10ByOrderByAge().stream()
-                .map(Lord::toDto)
+                .map(lordMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<LordDto> getLoafers() {
         return lordRepository.findAllLoafers().stream()
-                .map(Lord::toDto)
+                .map(lordMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<LordDto> getAll() {
         return lordRepository.findAll().stream()
-                .map(Lord::toDto)
+                .map(lordMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public LordDto add(LordDto lordDto) {
-        return lordRepository.save(new Lord(lordDto))
-                .toDto();
+        return lordMapper.toDto(lordRepository.save(new Lord(lordDto)));
     }
 
     @Override
@@ -74,16 +77,14 @@ public class LordServiceImpl implements LordService {
         Lord lord = getLordById(lordId);
         Planet planet = planetService.getPlanetById(planetId);
         planet.setLord(lord);
-        return planetService.save(planet)
-                .toDto();
+        return planetMapper.toDto(planetService.save(planet));
     }
 
     @Override
     public LordDto update(Long id, LordDto lordDto) throws LordNotFoundException {
         Lord lord = getLordById(id);
         lord.update(lordDto);
-        return lordRepository.save(lord)
-                .toDto();
+        return lordMapper.toDto(lordRepository.save(lord));
     }
 
     @Override

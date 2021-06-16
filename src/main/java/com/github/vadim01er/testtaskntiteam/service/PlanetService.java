@@ -1,6 +1,6 @@
 package com.github.vadim01er.testtaskntiteam.service;
 
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 
 import java.util.List;

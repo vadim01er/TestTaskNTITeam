@@ -1,6 +1,6 @@
 package com.github.vadim01er.testtaskntiteam.controller;
 
-import com.github.vadim01er.testtaskntiteam.entity.PlanetDto;
+import com.github.vadim01er.testtaskntiteam.dto.PlanetDto;
 import com.github.vadim01er.testtaskntiteam.exception.LordNotFoundException;
 import com.github.vadim01er.testtaskntiteam.exception.PlanetNotFoundException;
 import com.github.vadim01er.testtaskntiteam.service.LordServiceImpl;
@@ -35,12 +35,14 @@ class LordControllerUnitTest {
 
     @Autowired
     private MockMvc mvc;
+    @Autowired
+    private Utils utils;
     @MockBean
     private LordServiceImpl lordService;
 
     @Test
     void getAll_ReturnStatusOk_andReturnLordDtoList() throws Exception {
-        when(lordService.getAll()).thenReturn(Collections.singletonList(getLordDtoWithPlanetDto()));
+        when(lordService.getAll()).thenReturn(Collections.singletonList(utils.getLordDtoWithPlanetDto()));
         mvc.perform(get(urlTemplate))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -65,7 +67,7 @@ class LordControllerUnitTest {
 
     @Test
     void getLoafers_ReturnStatusOk_AndReturnLordDtoList() throws Exception {
-        when(lordService.getLoafers()).thenReturn(List.of(getLordDto()));
+        when(lordService.getLoafers()).thenReturn(List.of(utils.getLordDto()));
         mvc.perform(get(urlTemplate + "/loafers"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -88,7 +90,7 @@ class LordControllerUnitTest {
 
     @Test
     void getById_ReturnStatusOk_andReturnLordDto() throws Exception {
-        when(lordService.getById(LORD_ID)).thenReturn(Utils.getLordDtoWithPlanetDto());
+        when(lordService.getById(LORD_ID)).thenReturn(utils.getLordDtoWithPlanetDto());
         mvc.perform(get(urlTemplate + "/" + LORD_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -112,7 +114,7 @@ class LordControllerUnitTest {
 
     @Test
     void getTop_ReturnStatusOk_AndReturnLordDtoList() throws Exception {
-        when(lordService.getTopTen()).thenReturn(Collections.singletonList(getLordDto()));
+        when(lordService.getTopTen()).thenReturn(Collections.singletonList(utils.getLordDto()));
         mvc.perform(get(urlTemplate + "/top"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -135,11 +137,11 @@ class LordControllerUnitTest {
 
     @Test
     void post_ReturnStatusCreated_AndReturnLordDto() throws Exception {
-        when(lordService.add(any())).thenReturn(getLordDto());
+        when(lordService.add(any())).thenReturn(utils.getLordDto());
         mvc.perform(
                 post(urlTemplate)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(getLordDtoForPost())))
+                        .content(OBJECT_MAPPER.writeValueAsString(utils.getLordDtoForPost())))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(LORD_ID.intValue())))
@@ -153,7 +155,7 @@ class LordControllerUnitTest {
         mvc.perform(
                 post(urlTemplate)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(getLordDto())))
+                        .content(OBJECT_MAPPER.writeValueAsString(utils.getLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
@@ -211,8 +213,8 @@ class LordControllerUnitTest {
 
     @Test
     void addPlanet_ReturnStatusCreated_AndReturnPlanetDto() throws Exception {
-        PlanetDto planetDto = getPlanetDtoForPost();
-        when(lordService.addPlanet(eq(LORD_ID), eq(planetDto))).thenReturn(getPlanetDtoWithLordDto());
+        PlanetDto planetDto = utils.getPlanetDtoForPost();
+        when(lordService.addPlanet(eq(LORD_ID), eq(planetDto))).thenReturn(utils.getPlanetDtoWithLordDto());
         mvc.perform(
                 post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -231,7 +233,7 @@ class LordControllerUnitTest {
         mvc.perform(
                 post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(getPlanetDtoWithLordDto())))
+                        .content(OBJECT_MAPPER.writeValueAsString(utils.getPlanetDtoWithLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
@@ -255,7 +257,7 @@ class LordControllerUnitTest {
 
     @Test
     void addPlanet_ReturnStatusBadRequest_AndReturnUnformedJsonException() throws Exception {
-        when(lordService.addPlanet(eq(LORD_ID), any())).thenReturn(getPlanetDtoWithLordDto());
+        when(lordService.addPlanet(eq(LORD_ID), any())).thenReturn(utils.getPlanetDtoWithLordDto());
         mvc.perform(
                 post(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -281,7 +283,7 @@ class LordControllerUnitTest {
 
     @Test
     void update_ReturnStatusOk_AndReturnLordDto() throws Exception {
-        when(lordService.update(eq(LORD_ID), any())).thenReturn(getLordDto("new name", 21));
+        when(lordService.update(eq(LORD_ID), any())).thenReturn(utils.getLordDto("new name", 21));
         mvc.perform(
                 put(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -312,7 +314,7 @@ class LordControllerUnitTest {
         mvc.perform(
                 put(urlTemplate + "/" + LORD_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(getLordDto())))
+                        .content(OBJECT_MAPPER.writeValueAsString(utils.getLordDto())))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status", is(HttpStatus.BAD_REQUEST.value())))
@@ -359,7 +361,7 @@ class LordControllerUnitTest {
     @Test
     void assignPlanetToLord_ReturnStatusOk_AndReturnPlanetDto() throws Exception {
         when(lordService.assignToManagePlanet(eq(LORD_ID), eq(PLANET_ID)))
-                .thenReturn(getPlanetDtoWithLordDto());
+                .thenReturn(utils.getPlanetDtoWithLordDto());
         mvc.perform(
                 put(urlTemplate + "/" + LORD_ID + "/assign_planet")
                         .param("planet_id", String.valueOf(PLANET_ID)))
