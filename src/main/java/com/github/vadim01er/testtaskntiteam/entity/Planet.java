@@ -50,15 +50,10 @@ public class Planet extends AbstractEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
         Planet planet = (Planet) o;
         if (lord != null && planet.lord != null) {
             return Objects.equals(lord.getId(), planet.lord.getId());

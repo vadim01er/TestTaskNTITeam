@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/vadim01er/TestTaskNTITeam/branch/master/graph/badge.svg?token=TO0W5AU8FK)](https://codecov.io/gh/vadim01er/TestTaskNTITeam)
+
 # Тестовое задание NTI TEAM
 
 ### Описание:

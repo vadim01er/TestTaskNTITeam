@@ -57,6 +57,7 @@ public class Lord extends AbstractEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
+
         Lord lord = (Lord) o;
         return Objects.equals(age, lord.age)
                 && Objects.equals(planets, lord.planets);
