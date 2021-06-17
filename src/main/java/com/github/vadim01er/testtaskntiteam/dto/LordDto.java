@@ -24,7 +24,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LordDto extends AbstractDto {
-
     @NotNull
     @Min(1)
     @Max(200)
